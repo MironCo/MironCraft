@@ -1,6 +1,8 @@
 #pragma once
 #include "Camera.h"
 #include "Block.h"
+#include "Tree.h"
+
 #include <thread>
 #include <future>
 
@@ -77,12 +79,11 @@ public:
 		std::vector<GLuint> blockIndsVec;
 
 		int blockNum = 0;
-
-		for (int x = 0; x < blocksToRender.size(); x++)
+		//
+		for (int x = 0; x < CHUNK_SIZE; x++)
 		{
-			for (int z = 0; z < blocksToRender[x].size(); z++)
+			for (int z = 0; z < CHUNK_SIZE; z++)
 			{
-
 				for (int y = 0; y < blocksToRender[x][z].size(); y++)
 				{
 					if (blocksToRender[x][z][y] != nullptr)
@@ -175,6 +176,18 @@ public:
 						{
 							Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::WATER);
 							vecY.push_back(block);
+						}
+					}
+					if (y == blockHeight + 1)
+					{
+						if (biomeType == Biome::GRASSLAND || biomeType == Biome::HILLS)
+						{
+							srand(time(0));
+							int treeChance = rand() % 10;
+							if (treeChance == 3)
+							{
+								Tree* tree = new Tree(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), vecY);
+							}
 						}
 					}
 					totalBlocks++;
