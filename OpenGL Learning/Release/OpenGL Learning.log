@@ -1,0 +1,228 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(499,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
+  glad.c
+  main.cpp
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Shader.h(15,27): warning C4244: 'argument': conversion from 'std::streamoff' to 'const unsigned int', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(106,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(106,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(106,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(106,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(107,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(107,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(107,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(107,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(108,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(108,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(108,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(108,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(109,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(109,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(109,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(109,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(112,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(112,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(112,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(112,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(113,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(113,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(113,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(113,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(114,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(114,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(114,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(114,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(115,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(115,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(115,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(115,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(140,1): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(118,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(118,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(118,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(118,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(119,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(119,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(119,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(119,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(120,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(120,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(120,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(120,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(121,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(121,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(121,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(121,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(124,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(124,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(124,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(124,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(125,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(125,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(125,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(125,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(126,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(126,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(126,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(126,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(127,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(127,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(127,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(127,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(130,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(130,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(130,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(130,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(131,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(131,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(131,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(131,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(132,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(132,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(132,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(132,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(133,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(133,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(133,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(133,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(136,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(136,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(136,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(136,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(137,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(137,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(137,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(137,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(138,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(138,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(138,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(138,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(139,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(139,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(139,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(139,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(150,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(150,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(150,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(150,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(151,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(151,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(151,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(151,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(152,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(152,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(152,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(152,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(153,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(153,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(153,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(153,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(156,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(156,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(156,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(156,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(157,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(157,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(157,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(157,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(158,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(158,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(158,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(158,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(159,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(159,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(159,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(159,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(184,1): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(162,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(162,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(162,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(162,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(163,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(163,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(163,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(163,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(164,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(164,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(164,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(164,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(165,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(165,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(165,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(165,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(168,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(168,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(168,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(168,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(169,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(169,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(169,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(169,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(170,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(170,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(170,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(170,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(171,89): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(171,89): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(171,114): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(171,114): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(174,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(174,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(174,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(174,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(175,87): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(175,87): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(175,112): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(175,112): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(176,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(176,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(176,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(176,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(177,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(177,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(177,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(177,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(180,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(180,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(180,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(180,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(181,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(181,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(181,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(181,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(182,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(182,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(182,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(182,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(183,88): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(183,88): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(183,113): warning C4838: conversion from 'double' to 'GLfloat' requires a narrowing conversion
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(183,113): warning C4244: 'initializing': conversion from 'double' to 'GLfloat', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(228,1): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Chunk.h(41,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Chunk.h(42,21): warning C4244: '=': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Chunk.h(81,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Chunk.h(83,22): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Chunk.h(86,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Chunk.h(189,58): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Chunk.h(189,126): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Game.h(7,10): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Game.h(24,13): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  stb.cpp
+  Generating code
+  Previous IPDB not found, fall back to full compilation.
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(229): warning C4172: returning address of local variable or temporary: blockOffsetVertices
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(185): warning C4172: returning address of local variable or temporary: blockOffsetVertices
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(141): warning C4172: returning address of local variable or temporary: blockOffsetVertices
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(236): warning C4172: returning address of local variable or temporary: blockOffsetVertices
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(239): warning C4172: returning address of local variable or temporary: blockOffsetVertices
+C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\src\Block.h(242): warning C4172: returning address of local variable or temporary: blockOffsetVertices
+  All 850 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  OpenGL Learning.vcxproj -> C:\Users\Miron Sulicz\Desktop\C++ OpenGL\MironCraft\OpenGL Learning\Build\OpenGL Learning.exe

@@ -157,11 +157,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\#Libraries\GLAD\src\glad.c" />
+    <ClCompile Include="glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\stb.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Dependencies\include\glad\glad.h" />
     <ClInclude Include="Dependencies\include\stb\stb_image.h" />
     <ClInclude Include="src\Application.h" />
     <ClInclude Include="src\Block.h" />
