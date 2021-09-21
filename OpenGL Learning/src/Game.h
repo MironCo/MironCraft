@@ -30,8 +30,6 @@ public:
 			{
 				float biomeType = glm::simplex(glm::vec2(x/4 + randomOffset, z/4 + randomOffset));
 
-				//std::cout << biomeType << std::endl;
-
 				if (biomeType >= -1 && biomeType < -0.3f)
 				{
 					Chunk* chunk = new Chunk(glm::vec2(x, z), randomOffset, divisor, _shader, Biome::OCEAN);
@@ -42,9 +40,15 @@ public:
 					Chunk* chunk = new Chunk(glm::vec2(x, z), randomOffset, divisor, _shader, Biome::DESERT);
 					Renderer::AddToRender(chunk);
 					continue;
-				} else if (biomeType >= 0.2f && biomeType < 0.6f)
+				} else if (biomeType >= 0.2f && biomeType < 0.45f)
 				{
 					Chunk* chunk = new Chunk(glm::vec2(x, z), randomOffset, divisor, _shader, Biome::GRASSLAND);
+					Renderer::AddToRender(chunk);
+					continue;
+				}
+				else if (biomeType >= 0.45 && biomeType < 0.6f)
+				{
+					Chunk* chunk = new Chunk(glm::vec2(x, z), randomOffset, divisor, _shader, Biome::FOREST);
 					Renderer::AddToRender(chunk);
 					continue;
 				} else if (biomeType >= 0.6f && biomeType <= 1.0f)

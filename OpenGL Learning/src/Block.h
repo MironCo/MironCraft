@@ -5,7 +5,6 @@
 #include "Common.h" 
 #include "VertexArray.h"
 #include "IndexBuffer.h"
-#include "Camera.h"
 #include "Texture.h"
 
 enum BlockType

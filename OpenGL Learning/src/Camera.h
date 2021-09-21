@@ -37,6 +37,10 @@ public:
 
 		glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgramID, uniform), 1, GL_FALSE, glm::value_ptr(proj * view));
 	}
+	void CheckCollisions()
+	{
+
+	}
 	void CheckInputs(GLFWwindow* window)
 	{
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -52,7 +56,6 @@ public:
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 		{
 			position += speed * -glm::vec3(rotation.x, 0, rotation.z);
-
 		}
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		{

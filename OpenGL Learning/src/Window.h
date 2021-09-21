@@ -1,5 +1,4 @@
 #pragma once
-
 #include <stb/stb_image.h>
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -7,7 +6,6 @@
 
 #include "Common.h"
 #include "Shader.h"
-
 #include "Game.h"
 #include "Renderer.h"
 
@@ -37,20 +35,13 @@ public:
 		}
 		//Make the window part of the current opengl context
 		glfwMakeContextCurrent(window);
-
 		//Start The OpenGl
 		gladLoadGL();
 
 		//Set the viewport
 		glViewport(0, 0, WindowData::width, WindowData::height);
-		glMatrixMode(GL_PROJECTION);
-		glOrtho(-WindowData::aspectRatio, WindowData::aspectRatio, -1, 1, -1, 1);
 
 		glEnable(GL_DEPTH_TEST);
-		//glEnable(GL_CULL_FACE);
-		//glFrontFace(GL_CCW);
-
-		//glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
 		Shader shaderProgram = Shader("res/shaders/default.vert", "res/shaders/default.frag");
@@ -81,8 +72,6 @@ public:
 			// Take care of all GLFW events
 			glfwPollEvents();
 		}
-
-		Window::Close();
 	}
 
 	static inline void Close()

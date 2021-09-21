@@ -8,7 +8,7 @@
 
 enum Biome
 {
-	GRASSLAND = 3, DESERT = 1, OCEAN = -2, HILLS = 4,
+	GRASSLAND = 2, FOREST = 3, DESERT = 1, OCEAN = -1, HILLS = 4,
 };
 
 class Chunk
@@ -18,7 +18,7 @@ private:
 	Biome biomeType;
 
 	static const int CHUNK_SIZE = 16;
-	static const int CHUNK_DEPTH = 7;
+	static const int CHUNK_DEPTH = 6;
 
 	int chunkX;
 	int chunkZ;
@@ -52,24 +52,19 @@ public:
 		} else if (biomeType == Biome::DESERT)
 		{
 			amplitude = 4;
-		} else if (biomeType == Biome::GRASSLAND)
+		} else if (biomeType == Biome::GRASSLAND || biomeType == Biome::FOREST)
 		{
 			amplitude = 4;
 		} else if (biomeType == Biome::HILLS)
 		{
 			amplitude = 10;
 		}
-
-		model = glm::mat4(1.0f);
-		model = glm::translate(glm::vec3(0, 0, 0));
 	}
 	void DrawChunk(Shader& shader, Camera& cam)
 	{
 		shader.Activate();
 		chunkVAO.Bind();
-
 		texture.Bind();
-		glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawElements(GL_TRIANGLES, totalBlocks*36, GL_UNSIGNED_INT, 0);
 	}
@@ -79,7 +74,7 @@ public:
 		std::vector<GLuint> blockIndsVec;
 
 		int blockNum = 0;
-		//
+		
 		for (int x = 0; x < CHUNK_SIZE; x++)
 		{
 			for (int z = 0; z < CHUNK_SIZE; z++)
@@ -141,7 +136,7 @@ public:
 				{
 					if (y == blockHeight)
 					{
-						if (biomeType == Biome::GRASSLAND || biomeType == Biome::HILLS)
+						if (biomeType == Biome::GRASSLAND || biomeType == Biome::HILLS || biomeType == Biome::FOREST)
 						{
 							Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::GRASS);
 							vecY.push_back(block);
@@ -157,7 +152,7 @@ public:
 						{
 							Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::STONE);
 							vecY.push_back(block);
-						} else if (biomeType == Biome::GRASSLAND)
+						} else if (biomeType == Biome::GRASSLAND || biomeType == Biome::FOREST)
 						{
 							if (y > blockHeight - 3)
 							{
@@ -180,10 +175,10 @@ public:
 					}
 					if (y == blockHeight + 1)
 					{
-						if (biomeType == Biome::GRASSLAND)
+						if (biomeType == Biome::FOREST)
 						{
 							srand((x + z) * y + z);
-							int treeChance = rand() % 150;
+							int treeChance = rand() % 70;
 							if (treeChance == 3)
 							{
 								Tree* tree = new Tree(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), vecY);
