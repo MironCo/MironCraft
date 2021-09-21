@@ -180,10 +180,18 @@ public:
 					}
 					if (y == blockHeight + 1)
 					{
-						if (biomeType == Biome::GRASSLAND || biomeType == Biome::HILLS)
+						if (biomeType == Biome::GRASSLAND)
 						{
-							srand(time(0));
-							int treeChance = rand() % 10;
+							srand((x + z) * y + z);
+							int treeChance = rand() % 150;
+							if (treeChance == 3)
+							{
+								Tree* tree = new Tree(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), vecY);
+							}
+						} else if (biomeType == Biome::HILLS)
+						{
+							srand((x + z) * y + z);
+							int treeChance = rand() % 220;
 							if (treeChance == 3)
 							{
 								Tree* tree = new Tree(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), vecY);
