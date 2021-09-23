@@ -64,6 +64,7 @@ public:
 			//block->Draw(shaderProgram, camera);
 			camera.CheckInputs(window);
 			camera.Matrix(60.0f, 0.02f, 100.0f, shaderProgram, "cameraMatrix");
+			camera.CheckCollisions();
 
 			Renderer::Draw(shaderProgram, camera);
 

@@ -8,7 +8,7 @@ public:
 	Tree(glm::vec3 position, std::vector<Block*>& placeToAdd)
 	{
 		srand(position.x);
-		int treeHeight = rand() % 3 + 3;
+		int treeHeight = rand() % 4 + 3;
 
 		//Generate Trunk
 		for (int i = 0; i < treeHeight; i++)

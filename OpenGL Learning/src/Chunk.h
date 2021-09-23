@@ -96,7 +96,7 @@ public:
 							blockIndsVec.push_back((blockIndices[i] + (blockNum * 24)));
 						}
 						blockNum++;
-						blocksToRender[x][z][y]->Delete();
+						//blocksToRender[x][z][y]->Delete();
 					}
 				}
 			}
@@ -114,7 +114,7 @@ public:
 		chunkVAO.Unbind();
 		blocksVBO.Unbind();
 		blocksIBO.Unbind();
-		blocksToRender.clear();
+		//blocksToRender.clear();
 	}
 	
 	void Generate()
@@ -204,7 +204,7 @@ public:
 	{
 		float distanceToCamera = std::sqrt(sqr(_cam.position.x - ((chunkX * CHUNK_SIZE) + CHUNK_SIZE * 0.5)) + sqr(_cam.position.z - ((chunkZ * CHUNK_SIZE) + CHUNK_SIZE * 0.5)));
 
-		if (distanceToCamera > CHUNK_SIZE * 3)
+		if (distanceToCamera > CHUNK_SIZE * 4)
 		{
 			isLoaded = false;
 		}

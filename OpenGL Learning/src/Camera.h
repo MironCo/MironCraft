@@ -7,13 +7,15 @@
 
 #include "Common.h"
 #include "Shader.h"
+#include "Block.h"
 
 class Camera
 {
 public:
+	const float GRAVITY = 0.1f;
+
 	glm::vec3 position;
 	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, -1.0f);
-
 	glm::vec3 upDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	float speed = 0.095f;
@@ -39,7 +41,10 @@ public:
 	}
 	void CheckCollisions()
 	{
-
+		//if (position.y > 5)
+		//{
+		//	position.y -= GRAVITY;
+		//}
 	}
 	void CheckInputs(GLFWwindow* window)
 	{

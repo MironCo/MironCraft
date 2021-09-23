@@ -18,8 +18,7 @@ private:
 	//Block Vertices
 	Texture texture;
 	glm::mat4 model = glm::mat4(0.0f);
-	
-	glm::vec3 index;
+
 	BlockType blockType;
 	
 public:
