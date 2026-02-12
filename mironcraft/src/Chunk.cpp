@@ -31,7 +31,7 @@ void Chunk::DrawChunk(Shader& shader)
 	shader.Activate();
 	chunkVAO.Bind();
 	texture.Bind();
-	glDrawElements(GL_TRIANGLES, totalBlocks * 36, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, totalIndices, GL_UNSIGNED_INT, 0);
 }
 
 void Chunk::BatchBlocks()
@@ -39,7 +39,7 @@ void Chunk::BatchBlocks()
 	std::vector<GLfloat> blockVertsVec;
 	std::vector<GLuint> blockIndsVec;
 
-	int blockNum = 0;
+	int currentVertex = 0;
 
 	for (int x = 0; x < CHUNK_SIZE; x++)
 	{
@@ -52,22 +52,68 @@ void Chunk::BatchBlocks()
 				{
 					GLfloat* blockVertices = block->GetBlockVertsWithOffset(
 						block->position, block->textureOffset, block->GetBlockType());
-					GLuint* blockIndices = block->blockIndices;
 
-					for (int v = 0; v < 192; v++)
-					{
-						blockVertsVec.push_back(blockVertices[v]);
-					}
+					// Check each face for visibility (only render if no neighbor)
+					// Face order: Front(+Z), Back(-Z), Left(-X), Right(+X), Top(+Y), Bottom(-Y)
+					bool faces[6];
+					faces[0] = !HasBlockAt(x, z + 1, y);     // Front (+Z)
+					faces[1] = !HasBlockAt(x, z - 1, y);     // Back (-Z)
+					faces[2] = !HasBlockAt(x - 1, z, y);     // Left (-X)
+					faces[3] = !HasBlockAt(x + 1, z, y);     // Right (+X)
+					faces[4] = !HasBlockAt(x, z, y + 1);     // Top (+Y)
+					faces[5] = (y == 0) || !HasBlockAt(x, z, y - 1); // Bottom (-Y)
 
-					for (int i = 0; i < 36; i++)
+					for (int face = 0; face < 6; face++)
 					{
-						blockIndsVec.push_back(blockIndices[i] + (blockNum * 24));
+						if (faces[face])
+						{
+							// Each face has 4 vertices × 8 floats = 32 floats
+							int vertStart = face * 32;
+							for (int v = 0; v < 32; v++)
+							{
+								blockVertsVec.push_back(blockVertices[vertStart + v]);
+							}
+
+							// Index patterns vary by face (from Block.h blockIndices)
+							// Front/Back/Left: 0,1,2, 0,2,3
+							// Right/Top/Bottom: different patterns
+							if (face < 3) // Front, Back, Left
+							{
+								blockIndsVec.push_back(currentVertex + 0);
+								blockIndsVec.push_back(currentVertex + 1);
+								blockIndsVec.push_back(currentVertex + 2);
+								blockIndsVec.push_back(currentVertex + 0);
+								blockIndsVec.push_back(currentVertex + 2);
+								blockIndsVec.push_back(currentVertex + 3);
+							}
+							else if (face == 3) // Right: 12,13,14, 14,15,13
+							{
+								blockIndsVec.push_back(currentVertex + 0);
+								blockIndsVec.push_back(currentVertex + 1);
+								blockIndsVec.push_back(currentVertex + 2);
+								blockIndsVec.push_back(currentVertex + 2);
+								blockIndsVec.push_back(currentVertex + 3);
+								blockIndsVec.push_back(currentVertex + 1);
+							}
+							else // Top/Bottom: 16,17,18, 18,19,17 and 20,21,22, 22,23,21
+							{
+								blockIndsVec.push_back(currentVertex + 0);
+								blockIndsVec.push_back(currentVertex + 1);
+								blockIndsVec.push_back(currentVertex + 2);
+								blockIndsVec.push_back(currentVertex + 2);
+								blockIndsVec.push_back(currentVertex + 3);
+								blockIndsVec.push_back(currentVertex + 1);
+							}
+
+							currentVertex += 4;
+						}
 					}
-					blockNum++;
 				}
 			}
 		}
 	}
+
+	totalIndices = static_cast<int>(blockIndsVec.size());
 
 	chunkVAO.Bind();
 
@@ -164,8 +210,6 @@ void Chunk::Generate()
 						Tree::Generate(blockPos, vecY);
 					}
 				}
-
-				totalBlocks++;
 			}
 			vecZY.push_back(std::move(vecY));
 		}
@@ -193,4 +237,13 @@ void Chunk::CheckDistanceToPlayer(Player& player, Shader& shader)
 			hasGenerated = true;
 		}
 	}
+}
+
+bool Chunk::HasBlockAt(int x, int z, size_t y) const
+{
+	if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
+		return false;
+	if (y >= blocksToRender[x][z].size())
+		return false;
+	return blocksToRender[x][z][y] != nullptr;
 }

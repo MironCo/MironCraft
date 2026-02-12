@@ -26,7 +26,7 @@ private:
 	int divisor = 1;
 	int amplitude = 4;
 
-	int totalBlocks = 0;
+	int totalIndices = 0;
 
 	glm::mat4 model = glm::mat4(1.0f);
 	VertexArray chunkVAO;
@@ -43,4 +43,7 @@ public:
 	void BatchBlocks();
 	void Generate();
 	void CheckDistanceToPlayer(Player& player, Shader& shader);
+
+private:
+	bool HasBlockAt(int x, int z, size_t y) const;
 };
