@@ -78,16 +78,16 @@ public:
 			if (hasCompiled == GL_FALSE)
 			{
 				glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-				std::cout << "Shader Compliation Error for:" << type << std::endl;
+				std::cout << "Shader Compliation Error for:" << type << "\n" << infoLog << std::endl;
 			}
 		}
 		else
 		{
-			glGetProgramiv(shader, GL_COMPILE_STATUS, &hasCompiled);
+			glGetProgramiv(shader, GL_LINK_STATUS, &hasCompiled);
 			if (hasCompiled == GL_FALSE)
 			{
 				glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-				std::cout << "Shader Linking Error for:" << type << std::endl;
+				std::cout << "Shader Linking Error for:" << type << "\n" << infoLog << std::endl;
 			}
 		}
 	}

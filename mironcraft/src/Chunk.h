@@ -31,8 +31,10 @@ private:
 
 	glm::mat4 model = glm::mat4(1.0f);
 	VertexArray chunkVAO;
+	VertexBuffer blocksVBO;
+	IndexBuffer blocksIBO;
 	Texture texture;
-	bool hasGenerated;
+	bool hasGenerated = false;
 public:
 	bool isLoaded;
 	Chunk(glm::vec2 _position, int _randomOffset, int _divisor, Shader& shader, Biome _biome)
@@ -103,8 +105,16 @@ public:
 		}
 
 		chunkVAO.Bind();
-		VertexBuffer blocksVBO(blockVertsVec.data(), blockVertsVec.size()*sizeof(float));
-		IndexBuffer blocksIBO(blockIndsVec.data(), blockIndsVec.size() * sizeof(int));
+
+		// Generate and bind vertex buffer
+		glGenBuffers(1, &blocksVBO.vertexBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, blocksVBO.vertexBufferId);
+		glBufferData(GL_ARRAY_BUFFER, blockVertsVec.size() * sizeof(float), blockVertsVec.data(), GL_STATIC_DRAW);
+
+		// Generate and bind index buffer
+		glGenBuffers(1, &blocksIBO.indexBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, blocksIBO.indexBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, blockIndsVec.size() * sizeof(int), blockIndsVec.data(), GL_STATIC_DRAW);
 
 		chunkVAO.Link(blocksVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 		chunkVAO.Link(blocksVBO, 1, 1, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));

@@ -20,7 +20,8 @@ private:
 	glm::mat4 model = glm::mat4(0.0f);
 
 	BlockType blockType;
-	
+	GLfloat cachedVertices[192];
+
 public:
 	bool nextState = 1;
 	glm::vec2 textureOffset;
@@ -110,43 +111,44 @@ public:
 		GLfloat blockOffsetVertices[192] =
 		{
 			//COORDINATES													RGB     TEXTURE OFFSETS					 TEXTURE COORDINATES
-			//Front 						
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f, //0
-			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0, 0.0f,  //1
-			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //2
-			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //3
+			//Front
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f, //0
+			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f,  //1
+			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //2
+			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //3
 
 			//Back							
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f, //4
-			(offset.x) + 0.5f,	(offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0, 0.0f,  //5
-			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //6
-			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //7
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f, //4
+			(offset.x) + 0.5f,	(offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0, 0.0f,  //5
+			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //6
+			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //7
 
 			//Left							
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f,			//8
-			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f,//9
-			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //10
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f,//11
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f,			//8
+			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f,//9
+			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //10
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f,//11
 
 			//Right							
-			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f, //12
-			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f,//13
-			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //14
-			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //15
+			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f, //12
+			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f,//13
+			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //14
+			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //15
 
 			//Top							
-			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f, //16
-			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f, //17
-			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //18
-			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //19
+			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f, //16
+			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f, //17
+			(offset.x) + 0.5f,  (offset.y) + 0.5f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //18
+			(offset.x) + -0.5f, (offset.y) + 0.5f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //19
 
 			//Bottom						
-			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f,			//20
-			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0, 0.0f, //21
-			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //22
-			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0, 1.0f //23
+			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f,			//20
+			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0, 0.0f, //21
+			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //22
+			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0, 1.0f //23
 		};
-		return blockOffsetVertices;
+		memcpy(cachedVertices, blockOffsetVertices, sizeof(blockOffsetVertices));
+		return cachedVertices;
 	}
 
 	GLfloat* GetWaterBlockVertsWithOffset(glm::vec3 offset, glm::vec2 _textureOffset)
@@ -155,42 +157,43 @@ public:
 		{
 			//COORDINATES													RGB     TEXTURE OFFSETS					 TEXTURE COORDINATES
 			//Front 						
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f, //0
-			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0, 0.0f,  //1
-			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //2
-			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //3
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f, //0
+			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0, 0.0f,  //1
+			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //2
+			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.85f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //3
 
 			//Back							
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f, //4
-			(offset.x) + 0.5f,	(offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0, 0.0f,  //5
-			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //6
-			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //7
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f, //4
+			(offset.x) + 0.5f,	(offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0, 0.0f,  //5
+			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //6
+			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //7
 
 			//Left							
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f,			//8
-			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f,//9
-			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //10
-			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f,//11
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f,			//8
+			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f,//9
+			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //10
+			(offset.x) + -0.5f, (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f,//11
 
 			//Right							
-			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f, //12
-			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f,//13
-			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //14
-			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //15
+			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f, //12
+			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + 0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f,//13
+			(offset.x) + 0.5f,  (offset.y) + -0.5f, (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //14
+			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + -0.5f,		0.65f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //15
 
 			//Top							
-			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f, //16
-			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 0.0f, //17
-			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //18
-			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0f, 1.0f, //19
+			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f, //16
+			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + 0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 0.0f, //17
+			(offset.x) + 0.5f,  (offset.y) + 0.3f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //18
+			(offset.x) + -0.5f, (offset.y) + 0.3f,  (offset.z) + -0.5f,		1.0f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f, //19
 
 			//Bottom						
-			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 0.0f,			//20
-			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0, 0.0f, //21
-			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 1.0f, 1.0f, //22
-			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25, _textureOffset.y * 0.25, 0.0, 1.0f //23
+			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 0.0f,			//20
+			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0, 0.0f, //21
+			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 1.0f, 1.0f, //22
+			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	_textureOffset.x * 0.25f, _textureOffset.y * 0.25f, 0.0f, 1.0f //23
 		};
-		return blockOffsetVertices;
+		memcpy(cachedVertices, blockOffsetVertices, sizeof(blockOffsetVertices));
+		return cachedVertices;
 	}
 
 	GLfloat* GetGrassBlockVertsWithOffset(glm::vec3 offset)
@@ -232,9 +235,10 @@ public:
 			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	3 * 0.25, 0 * 0.25, 1.0f, 0.0f,			//20
 			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	3 * 0.25, 0 * 0.25, 0.0, 0.0f, //21
 			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	3 * 0.25, 0 * 0.25, 1.0f, 1.0f, //22
-			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	3 * 0.25, 0 * 0.25, 0.0, 1.0f //23
+			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	3 * 0.25f, 0 * 0.25f, 0.0f, 1.0f //23
 		};
-		return blockOffsetVertices;
+		memcpy(cachedVertices, blockOffsetVertices, sizeof(blockOffsetVertices));
+		return cachedVertices;
 	}
 
 	GLfloat* GetLogBlockVertsWithOffset(glm::vec3 offset)
@@ -276,9 +280,10 @@ public:
 			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	3 * 0.25, 1 * 0.25, 1.0f, 0.0f,			//20
 			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + 0.5f,		0.4f,	3 * 0.25, 1 * 0.25, 0.0, 0.0f, //21
 			(offset.x) + -0.5f, (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	3 * 0.25, 1 * 0.25, 1.0f, 1.0f, //22
-			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	3 * 0.25, 1 * 0.25, 0.0, 1.0f //23
+			(offset.x) + 0.5f,  (offset.y) + -0.5f,  (offset.z) + -0.5f,	0.4f,	3 * 0.25f, 1 * 0.25f, 0.0f, 1.0f //23
 		};
-		return blockOffsetVertices;
+		memcpy(cachedVertices, blockOffsetVertices, sizeof(blockOffsetVertices));
+		return cachedVertices;
 	}
 
 	GLfloat* GetBlockVertsWithOffset(glm::vec3 offset, glm::vec2 _textureOffset, BlockType _type)
