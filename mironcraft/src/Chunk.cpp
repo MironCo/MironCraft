@@ -204,6 +204,139 @@ void Chunk::BatchBlocks()
 	}
 }
 
+// Get biome parameters for blending
+struct BiomeParams
+{
+	float amplitude;
+	float baseHeight;
+	bool hasGrass;
+	bool hasSand;
+	bool hasDirt;
+	bool canHaveTrees;
+	bool canHaveWater;
+	int treeChance;
+};
+
+static BiomeParams GetBiomeParams(Biome biome)
+{
+	BiomeParams p;
+	switch (biome)
+	{
+		case Biome::OCEAN:
+			p.amplitude = 3.0f;
+			p.baseHeight = -1.0f;
+			p.hasGrass = false;
+			p.hasSand = true;
+			p.hasDirt = false;
+			p.canHaveTrees = false;
+			p.canHaveWater = true;
+			p.treeChance = 0;
+			break;
+		case Biome::DESERT:
+			p.amplitude = 4.0f;
+			p.baseHeight = 1.0f;
+			p.hasGrass = false;
+			p.hasSand = true;
+			p.hasDirt = false;
+			p.canHaveTrees = false;
+			p.canHaveWater = false;
+			p.treeChance = 0;
+			break;
+		case Biome::GRASSLAND:
+			p.amplitude = 4.0f;
+			p.baseHeight = 2.0f;
+			p.hasGrass = true;
+			p.hasSand = false;
+			p.hasDirt = true;
+			p.canHaveTrees = false;
+			p.canHaveWater = true;
+			p.treeChance = 220;
+			break;
+		case Biome::FOREST:
+			p.amplitude = 4.0f;
+			p.baseHeight = 3.0f;
+			p.hasGrass = true;
+			p.hasSand = false;
+			p.hasDirt = true;
+			p.canHaveTrees = true;
+			p.canHaveWater = true;
+			p.treeChance = 70;
+			break;
+		case Biome::HILLS:
+			p.amplitude = 10.0f;
+			p.baseHeight = 4.0f;
+			p.hasGrass = true;
+			p.hasSand = false;
+			p.hasDirt = false;
+			p.canHaveTrees = true;
+			p.canHaveWater = true;
+			p.treeChance = 220;
+			break;
+		default:
+			p.amplitude = 4.0f;
+			p.baseHeight = 2.0f;
+			p.hasGrass = true;
+			p.hasSand = false;
+			p.hasDirt = true;
+			p.canHaveTrees = false;
+			p.canHaveWater = true;
+			p.treeChance = 220;
+			break;
+	}
+	return p;
+}
+
+// Get biome weights at a world position (for smooth blending)
+static void GetBiomeWeights(float worldX, float worldZ, int seed, float weights[5], Biome biomes[5])
+{
+	biomes[0] = Biome::GRASSLAND;
+	biomes[1] = Biome::FOREST;
+	biomes[2] = Biome::DESERT;
+	biomes[3] = Biome::OCEAN;
+	biomes[4] = Biome::HILLS;
+
+	float biomeScale = 0.05f;
+	float moisture = glm::simplex(glm::vec2(
+		(worldX / 16.0f + seed) * biomeScale,
+		(worldZ / 16.0f + seed) * biomeScale
+	));
+	float temperature = glm::simplex(glm::vec2(
+		(worldX / 16.0f + seed + 1000) * biomeScale,
+		(worldZ / 16.0f + seed + 1000) * biomeScale
+	));
+
+	// Calculate soft weights based on distance from biome centers in climate space
+	// Desert: high temp, low moisture
+	weights[2] = glm::clamp((temperature - 0.1f) * 2.0f, 0.0f, 1.0f) *
+	             glm::clamp((-moisture - 0.0f) * 2.0f, 0.0f, 1.0f);
+
+	// Ocean: low temp or low moisture
+	float oceanTemp = glm::clamp((-temperature - 0.2f) * 2.0f, 0.0f, 1.0f);
+	float oceanMoist = glm::clamp((-moisture - 0.3f) * 2.0f, 0.0f, 1.0f);
+	weights[3] = glm::max(oceanTemp, oceanMoist);
+
+	// Forest: high moisture
+	weights[1] = glm::clamp((moisture - 0.1f) * 2.0f, 0.0f, 1.0f) *
+	             (1.0f - weights[3]) * (1.0f - weights[2]);
+
+	// Hills: medium-high temp, medium moisture
+	weights[4] = glm::clamp((temperature + 0.2f) * 1.5f, 0.0f, 1.0f) *
+	             glm::clamp((moisture + 0.4f) * 1.5f, 0.0f, 1.0f) *
+	             (1.0f - weights[1]) * (1.0f - weights[2]) * (1.0f - weights[3]);
+
+	// Grassland: fills the rest
+	float total = weights[1] + weights[2] + weights[3] + weights[4];
+	weights[0] = glm::max(0.0f, 1.0f - total);
+
+	// Normalize weights
+	total = weights[0] + weights[1] + weights[2] + weights[3] + weights[4];
+	if (total > 0.0f)
+	{
+		for (int i = 0; i < 5; i++)
+			weights[i] /= total;
+	}
+}
+
 void Chunk::Generate()
 {
 	int chunkOffsetX = chunkX * CHUNK_SIZE;
@@ -214,71 +347,97 @@ void Chunk::Generate()
 		std::vector<std::vector<std::unique_ptr<Block>>> vecZY;
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
-			float noiseVal = glm::perlin(glm::vec2(
-				(x + randomOffset + chunkOffsetX) / static_cast<float>(divisor),
-				(z + randomOffset + chunkOffsetZ) / static_cast<float>(divisor)));
-			float simplexVal = glm::simplex(glm::vec2(
-				(x + randomOffset + chunkOffsetX) / static_cast<float>(divisor * 2),
-				(z + randomOffset + chunkOffsetZ) / static_cast<float>(divisor * 3)));
+			int worldX = x + chunkOffsetX;
+			int worldZ = z + chunkOffsetZ;
 
-			int blockHeight = static_cast<int>(round((noiseVal + (simplexVal + 1) / 2) * amplitude)) + biomeType;
+			// Get biome weights at this position
+			float weights[5];
+			Biome biomes[5];
+			GetBiomeWeights(static_cast<float>(worldX), static_cast<float>(worldZ), randomOffset, weights, biomes);
+
+			// Blend terrain parameters
+			float blendedAmplitude = 0.0f;
+			float blendedBaseHeight = 0.0f;
+			float grassWeight = 0.0f;
+			float sandWeight = 0.0f;
+			float dirtWeight = 0.0f;
+			float treeWeight = 0.0f;
+			float waterWeight = 0.0f;
+			float avgTreeChance = 0.0f;
+
+			for (int i = 0; i < 5; i++)
+			{
+				if (weights[i] > 0.001f)
+				{
+					BiomeParams p = GetBiomeParams(biomes[i]);
+					blendedAmplitude += p.amplitude * weights[i];
+					blendedBaseHeight += p.baseHeight * weights[i];
+					if (p.hasGrass) grassWeight += weights[i];
+					if (p.hasSand) sandWeight += weights[i];
+					if (p.hasDirt) dirtWeight += weights[i];
+					if (p.canHaveTrees) treeWeight += weights[i];
+					if (p.canHaveWater) waterWeight += weights[i];
+					if (p.treeChance > 0) avgTreeChance += (1.0f / p.treeChance) * weights[i];
+				}
+			}
+
+			// Calculate terrain height with blended parameters
+			float noiseVal = glm::perlin(glm::vec2(
+				(worldX + randomOffset) / static_cast<float>(divisor),
+				(worldZ + randomOffset) / static_cast<float>(divisor)));
+			float simplexVal = glm::simplex(glm::vec2(
+				(worldX + randomOffset) / static_cast<float>(divisor * 2),
+				(worldZ + randomOffset) / static_cast<float>(divisor * 3)));
+
+			int blockHeight = static_cast<int>(round(
+				(noiseVal + (simplexVal + 1) / 2) * blendedAmplitude + blendedBaseHeight));
 
 			std::vector<std::unique_ptr<Block>> vecY;
 			for (int y = -CHUNK_DEPTH; y < blockHeight + 5; y++)
 			{
-				glm::vec3 blockPos(x + chunkOffsetX, y, z + chunkOffsetZ);
+				glm::vec3 blockPos(worldX, y, worldZ);
 
 				if (y == blockHeight)
 				{
-					if (biomeType == Biome::GRASSLAND || biomeType == Biome::HILLS || biomeType == Biome::FOREST)
+					// Surface block - choose based on biome weights
+					if (grassWeight > sandWeight)
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::GRASS));
-						g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 					}
-					else if (biomeType == Biome::DESERT || biomeType == Biome::OCEAN)
+					else
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::SAND));
-						g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 					}
+					g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 				}
 
 				if (y < blockHeight)
 				{
-					if (biomeType == Biome::HILLS || biomeType == Biome::DESERT || biomeType == Biome::OCEAN)
+					// Underground blocks
+					if (dirtWeight > 0.5f && y > blockHeight - 3)
+					{
+						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::DIRT));
+					}
+					else
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
-						g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 					}
-					else if (biomeType == Biome::GRASSLAND || biomeType == Biome::FOREST)
-					{
-						if (y > blockHeight - 3)
-						{
-							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::DIRT));
-							g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
-						}
-						else
-						{
-							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
-							g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
-						}
-					}
+					g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 				}
 
-				// Fill water from sea level (y=0) down to terrain surface
-				// Water appears where terrain is below sea level
+				// Water generation
 				const int SEA_LEVEL = 0;
-				if (biomeType != Biome::DESERT && y <= SEA_LEVEL && y > blockHeight)
+				if (waterWeight > 0.3f && y <= SEA_LEVEL && y > blockHeight)
 				{
 					vecY.push_back(std::make_unique<Block>(blockPos, BlockType::WATER));
-					// Water is not solid, no collision
 				}
 
-				if (y == blockHeight + 1)
+				// Tree generation
+				if (y == blockHeight + 1 && treeWeight > 0.3f && avgTreeChance > 0.0f)
 				{
-					// Use world position for deterministic but varied seeding
-					srand(static_cast<unsigned int>((x + chunkOffsetX) * 73856093 ^ (z + chunkOffsetZ) * 19349663));
-					int treeChance = rand() % (biomeType == Biome::FOREST ? 70 : 220);
-					if ((biomeType == Biome::FOREST || biomeType == Biome::HILLS) && treeChance == 0)
+					srand(static_cast<unsigned int>(worldX * 73856093 ^ worldZ * 19349663));
+					int effectiveTreeChance = static_cast<int>(1.0f / avgTreeChance);
+					if (effectiveTreeChance > 0 && (rand() % effectiveTreeChance) == 0)
 					{
 						Tree::Generate(blockPos, vecY);
 					}
