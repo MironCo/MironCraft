@@ -4,7 +4,7 @@
 #include <GLM/gtc/noise.hpp>
 
 #include "Chunk.h"
-#include "Renderer.h";
+#include "Renderer.h"
 
 class Game
 {
