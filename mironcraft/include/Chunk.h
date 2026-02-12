@@ -1,5 +1,5 @@
 #pragma once
-#include "Camera.h"
+#include "Player.h"
 #include "Block.h"
 
 #include <memory>
@@ -39,8 +39,8 @@ public:
 	bool isLoaded = false;
 
 	Chunk(glm::vec2 position, int randomOffset, int divisor, Shader& shader, Biome biome);
-	void DrawChunk(Shader& shader, Camera& cam);
+	void DrawChunk(Shader& shader);
 	void BatchBlocks();
 	void Generate();
-	void CheckDistanceToCamera(Camera& cam, Shader& shader);
+	void CheckDistanceToPlayer(Player& player, Shader& shader);
 };

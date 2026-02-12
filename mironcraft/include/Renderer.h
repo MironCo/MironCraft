@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Shader.h"
-#include "Camera.h"
+#include "Player.h"
 
 class Chunk;
 
@@ -13,5 +13,5 @@ private:
 	static std::vector<std::unique_ptr<Chunk>> chunksToRender;
 public:
 	static void AddToRender(std::unique_ptr<Chunk> chunk);
-	static void Draw(Shader& shader, Camera& camera);
+	static void Draw(Shader& shader, Player& player);
 };

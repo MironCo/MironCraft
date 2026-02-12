@@ -1,9 +1,10 @@
 #include "Window.h"
 #include "Common.h"
 #include "Shader.h"
-#include "Camera.h"
+#include "Player.h"
 #include "Game.h"
 #include "Renderer.h"
+#include "Collision.h"
 
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -39,23 +40,30 @@ void Window::Create()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader shaderProgram("res/shaders/default.vert", "res/shaders/default.frag");
-	Camera camera(glm::vec3(Game::worldCenter, 12.0f, Game::worldCenter));
+	Player player(glm::vec3(Game::worldCenter, 20.0f, Game::worldCenter));
 
 	Game::Start(shaderProgram);
 
 	Clear();
 	glfwSwapBuffers(window);
 
+	float lastTime = static_cast<float>(glfwGetTime());
+	float deltaTime = 0.0f;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		float currentTime = static_cast<float>(glfwGetTime());
+		deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
+
 		Clear();
 		shaderProgram.Activate();
 
-		camera.CheckInputs(window);
-		camera.Matrix(60.0f, 0.02f, 100.0f, shaderProgram, "cameraMatrix");
-		camera.CheckCollisions();
+		player.Update(window, deltaTime);
+		g_CollisionWorld.ResolveCollision(player, deltaTime);
+		player.Matrix(60.0f, 0.02f, 100.0f, shaderProgram, "cameraMatrix");
 
-		Renderer::Draw(shaderProgram, camera);
+		Renderer::Draw(shaderProgram, player);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

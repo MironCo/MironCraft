@@ -8,14 +8,14 @@ void Renderer::AddToRender(std::unique_ptr<Chunk> chunk)
 	chunksToRender.push_back(std::move(chunk));
 }
 
-void Renderer::Draw(Shader& shader, Camera& camera)
+void Renderer::Draw(Shader& shader, Player& player)
 {
 	for (auto& chunk : chunksToRender)
 	{
-		chunk->CheckDistanceToCamera(camera, shader);
+		chunk->CheckDistanceToPlayer(player, shader);
 		if (chunk->isLoaded)
 		{
-			chunk->DrawChunk(shader, camera);
+			chunk->DrawChunk(shader);
 		}
 	}
 }

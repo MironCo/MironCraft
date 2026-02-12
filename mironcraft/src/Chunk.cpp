@@ -1,5 +1,6 @@
 #include "Chunk.h"
 #include "Tree.h"
+#include "Collision.h"
 #include <GLM/gtc/noise.hpp>
 #include <cstdlib>
 
@@ -25,7 +26,7 @@ Chunk::Chunk(glm::vec2 position, int _randomOffset, int _divisor, Shader& shader
 	}
 }
 
-void Chunk::DrawChunk(Shader& shader, Camera& cam)
+void Chunk::DrawChunk(Shader& shader)
 {
 	shader.Activate();
 	chunkVAO.Bind();
@@ -117,10 +118,12 @@ void Chunk::Generate()
 					if (biomeType == Biome::GRASSLAND || biomeType == Biome::HILLS || biomeType == Biome::FOREST)
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::GRASS));
+						g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 					}
 					else if (biomeType == Biome::DESERT || biomeType == Biome::OCEAN)
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::SAND));
+						g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 					}
 				}
 
@@ -129,16 +132,19 @@ void Chunk::Generate()
 					if (biomeType == Biome::HILLS || biomeType == Biome::DESERT)
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
+						g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 					}
 					else if (biomeType == Biome::GRASSLAND || biomeType == Biome::FOREST)
 					{
 						if (y > blockHeight - 3)
 						{
 							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::DIRT));
+							g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 						}
 						else
 						{
 							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
+							g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
 						}
 					}
 				}
@@ -146,6 +152,7 @@ void Chunk::Generate()
 				if (biomeType != Biome::DESERT && y == -1 && y > blockHeight)
 				{
 					vecY.push_back(std::make_unique<Block>(blockPos, BlockType::WATER));
+					// Water is not solid, no collision
 				}
 
 				if (y == blockHeight + 1)
@@ -166,13 +173,13 @@ void Chunk::Generate()
 	}
 }
 
-void Chunk::CheckDistanceToCamera(Camera& cam, Shader& shader)
+void Chunk::CheckDistanceToPlayer(Player& player, Shader& shader)
 {
-	float distanceToCamera = std::sqrt(
-		sqr(cam.position.x - ((chunkX * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)) +
-		sqr(cam.position.z - ((chunkZ * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)));
+	float distanceToPlayer = std::sqrt(
+		sqr(player.position.x - ((chunkX * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)) +
+		sqr(player.position.z - ((chunkZ * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)));
 
-	if (distanceToCamera > CHUNK_SIZE * 4)
+	if (distanceToPlayer > CHUNK_SIZE * 4)
 	{
 		isLoaded = false;
 	}

@@ -1,4 +1,5 @@
 #include "Tree.h"
+#include "Collision.h"
 #include <cstdlib>
 
 namespace Tree
@@ -11,8 +12,9 @@ namespace Tree
 		// Generate Trunk
 		for (int i = 0; i < treeHeight; i++)
 		{
-			blocks.push_back(std::make_unique<Block>(
-				glm::vec3(position.x, position.y + i, position.z), BlockType::LOG));
+			glm::vec3 logPos(position.x, position.y + i, position.z);
+			blocks.push_back(std::make_unique<Block>(logPos, BlockType::LOG));
+			g_CollisionWorld.AddBlock(logPos.x, logPos.y, logPos.z);
 		}
 
 		// Generate Leaves
@@ -29,9 +31,9 @@ namespace Tree
 						                (x == -2 && z == 2) || (x == 2 && z == 2);
 						if (!isCorner)
 						{
-							blocks.push_back(std::make_unique<Block>(
-								glm::vec3(position.x + x, position.y + (treeHeight - 1) + y, position.z + z),
-								BlockType::LEAVES));
+							glm::vec3 leafPos(position.x + x, position.y + (treeHeight - 1) + y, position.z + z);
+							blocks.push_back(std::make_unique<Block>(leafPos, BlockType::LEAVES));
+							g_CollisionWorld.AddBlock(leafPos.x, leafPos.y, leafPos.z);
 						}
 					}
 				}
@@ -39,7 +41,8 @@ namespace Tree
 		}
 
 		// Final Leaf On Top
-		blocks.push_back(std::make_unique<Block>(
-			glm::vec3(position.x, position.y + treeHeight, position.z), BlockType::LEAVES));
+		glm::vec3 topLeafPos(position.x, position.y + treeHeight, position.z);
+		blocks.push_back(std::make_unique<Block>(topLeafPos, BlockType::LEAVES));
+		g_CollisionWorld.AddBlock(topLeafPos.x, topLeafPos.y, topLeafPos.z);
 	}
 }
