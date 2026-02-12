@@ -40,7 +40,7 @@ void Window::Create()
 	glEnable(GL_DEPTH_TEST);
 
 	Shader shaderProgram("res/shaders/default.vert", "res/shaders/default.frag");
-	Player player(glm::vec3(Game::worldCenter, 20.0f, Game::worldCenter));
+	Player player(glm::vec3(Game::worldCenter, 50.0f, Game::worldCenter));
 
 	Renderer::Init();
 	Game::Start(shaderProgram);

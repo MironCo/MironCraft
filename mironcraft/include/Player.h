@@ -46,6 +46,8 @@ public:
 	bool isGrounded = false;
 	bool cursorLocked = true;
 	bool leftMousePressed = false;
+	bool isFlying = false;
+	bool flyKeyPressed = false;
 
 	Player() = default;
 	Player(glm::vec3 _pos);

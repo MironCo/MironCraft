@@ -34,12 +34,66 @@ void Chunk::DrawChunk(Shader& shader)
 	glDrawElements(GL_TRIANGLES, totalIndices, GL_UNSIGNED_INT, 0);
 }
 
+void Chunk::DrawWater(Shader& shader)
+{
+	if (totalWaterIndices == 0) return;
+
+	shader.Activate();
+	waterVAO.Bind();
+	texture.Bind();
+	glDrawElements(GL_TRIANGLES, totalWaterIndices, GL_UNSIGNED_INT, 0);
+}
+
+// Helper to add face vertices and indices
+static void AddFace(int face, GLfloat* blockVertices, int& currentVertex,
+                    std::vector<GLfloat>& verts, std::vector<GLuint>& inds)
+{
+	int vertStart = face * 32;
+	for (int v = 0; v < 32; v++)
+	{
+		verts.push_back(blockVertices[vertStart + v]);
+	}
+
+	if (face < 3) // Front, Back, Left
+	{
+		inds.push_back(currentVertex + 0);
+		inds.push_back(currentVertex + 1);
+		inds.push_back(currentVertex + 2);
+		inds.push_back(currentVertex + 0);
+		inds.push_back(currentVertex + 2);
+		inds.push_back(currentVertex + 3);
+	}
+	else if (face == 3) // Right
+	{
+		inds.push_back(currentVertex + 0);
+		inds.push_back(currentVertex + 1);
+		inds.push_back(currentVertex + 2);
+		inds.push_back(currentVertex + 2);
+		inds.push_back(currentVertex + 3);
+		inds.push_back(currentVertex + 1);
+	}
+	else // Top/Bottom
+	{
+		inds.push_back(currentVertex + 0);
+		inds.push_back(currentVertex + 1);
+		inds.push_back(currentVertex + 2);
+		inds.push_back(currentVertex + 2);
+		inds.push_back(currentVertex + 3);
+		inds.push_back(currentVertex + 1);
+	}
+
+	currentVertex += 4;
+}
+
 void Chunk::BatchBlocks()
 {
 	std::vector<GLfloat> blockVertsVec;
 	std::vector<GLuint> blockIndsVec;
+	std::vector<GLfloat> waterVertsVec;
+	std::vector<GLuint> waterIndsVec;
 
 	int currentVertex = 0;
+	int currentWaterVertex = 0;
 
 	for (int x = 0; x < CHUNK_SIZE; x++)
 	{
@@ -53,72 +107,48 @@ void Chunk::BatchBlocks()
 					GLfloat* blockVertices = block->GetBlockVertsWithOffset(
 						block->position, block->textureOffset, block->GetBlockType());
 
-					// For trees (LOG/LEAVES), always render all faces since they're sparse
-					// For terrain blocks, check neighbors for face culling
+					bool isWater = (block->GetBlockType() == BlockType::WATER);
 					bool isTreeBlock = (block->GetBlockType() == BlockType::LOG ||
 					                    block->GetBlockType() == BlockType::LEAVES);
 
 					bool faces[6];
 					if (isTreeBlock)
 					{
-						// Render all faces for tree blocks
 						for (int i = 0; i < 6; i++) faces[i] = true;
+					}
+					else if (isWater)
+					{
+						// Water: cull faces adjacent to ANY block (water or solid)
+						// Only show faces adjacent to air
+						faces[0] = !HasBlockAt(x, z + 1, y);
+						faces[1] = !HasBlockAt(x, z - 1, y);
+						faces[2] = !HasBlockAt(x - 1, z, y);
+						faces[3] = !HasBlockAt(x + 1, z, y);
+						faces[4] = !HasBlockAt(x, z, y + 1); // Only show top if nothing above
+						faces[5] = false; // Never show bottom
 					}
 					else
 					{
-						// Check each face for visibility (only render if no neighbor)
-						// Face order: Front(+Z), Back(-Z), Left(-X), Right(+X), Top(+Y), Bottom(-Y)
-						faces[0] = !HasBlockAt(x, z + 1, y);     // Front (+Z)
-						faces[1] = !HasBlockAt(x, z - 1, y);     // Back (-Z)
-						faces[2] = !HasBlockAt(x - 1, z, y);     // Left (-X)
-						faces[3] = !HasBlockAt(x + 1, z, y);     // Right (+X)
-						faces[4] = !HasBlockAt(x, z, y + 1);     // Top (+Y)
-						faces[5] = (y == 0) || !HasBlockAt(x, z, y - 1); // Bottom (-Y)
+						faces[0] = !HasSolidBlockAt(x, z + 1, y);
+						faces[1] = !HasSolidBlockAt(x, z - 1, y);
+						faces[2] = !HasSolidBlockAt(x - 1, z, y);
+						faces[3] = !HasSolidBlockAt(x + 1, z, y);
+						faces[4] = !HasSolidBlockAt(x, z, y + 1);
+						faces[5] = (y == 0) || !HasSolidBlockAt(x, z, y - 1);
 					}
 
 					for (int face = 0; face < 6; face++)
 					{
 						if (faces[face])
 						{
-							// Each face has 4 vertices × 8 floats = 32 floats
-							int vertStart = face * 32;
-							for (int v = 0; v < 32; v++)
+							if (isWater)
 							{
-								blockVertsVec.push_back(blockVertices[vertStart + v]);
+								AddFace(face, blockVertices, currentWaterVertex, waterVertsVec, waterIndsVec);
 							}
-
-							// Index patterns vary by face (from Block.h blockIndices)
-							// Front/Back/Left: 0,1,2, 0,2,3
-							// Right/Top/Bottom: different patterns
-							if (face < 3) // Front, Back, Left
+							else
 							{
-								blockIndsVec.push_back(currentVertex + 0);
-								blockIndsVec.push_back(currentVertex + 1);
-								blockIndsVec.push_back(currentVertex + 2);
-								blockIndsVec.push_back(currentVertex + 0);
-								blockIndsVec.push_back(currentVertex + 2);
-								blockIndsVec.push_back(currentVertex + 3);
+								AddFace(face, blockVertices, currentVertex, blockVertsVec, blockIndsVec);
 							}
-							else if (face == 3) // Right: 12,13,14, 14,15,13
-							{
-								blockIndsVec.push_back(currentVertex + 0);
-								blockIndsVec.push_back(currentVertex + 1);
-								blockIndsVec.push_back(currentVertex + 2);
-								blockIndsVec.push_back(currentVertex + 2);
-								blockIndsVec.push_back(currentVertex + 3);
-								blockIndsVec.push_back(currentVertex + 1);
-							}
-							else // Top/Bottom: 16,17,18, 18,19,17 and 20,21,22, 22,23,21
-							{
-								blockIndsVec.push_back(currentVertex + 0);
-								blockIndsVec.push_back(currentVertex + 1);
-								blockIndsVec.push_back(currentVertex + 2);
-								blockIndsVec.push_back(currentVertex + 2);
-								blockIndsVec.push_back(currentVertex + 3);
-								blockIndsVec.push_back(currentVertex + 1);
-							}
-
-							currentVertex += 4;
 						}
 					}
 				}
@@ -126,6 +156,7 @@ void Chunk::BatchBlocks()
 		}
 	}
 
+	// Setup solid block mesh
 	totalIndices = static_cast<int>(blockIndsVec.size());
 
 	chunkVAO.Bind();
@@ -146,6 +177,31 @@ void Chunk::BatchBlocks()
 	chunkVAO.Unbind();
 	blocksVBO.Unbind();
 	blocksIBO.Unbind();
+
+	// Setup water mesh
+	totalWaterIndices = static_cast<int>(waterIndsVec.size());
+
+	if (totalWaterIndices > 0)
+	{
+		waterVAO.Bind();
+
+		glGenBuffers(1, &waterVBO.vertexBufferId);
+		glBindBuffer(GL_ARRAY_BUFFER, waterVBO.vertexBufferId);
+		glBufferData(GL_ARRAY_BUFFER, waterVertsVec.size() * sizeof(float), waterVertsVec.data(), GL_STATIC_DRAW);
+
+		glGenBuffers(1, &waterIBO.indexBufferID);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waterIBO.indexBufferID);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, waterIndsVec.size() * sizeof(int), waterIndsVec.data(), GL_STATIC_DRAW);
+
+		waterVAO.Link(waterVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+		waterVAO.Link(waterVBO, 1, 1, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+		waterVAO.Link(waterVBO, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(4 * sizeof(float)));
+		waterVAO.Link(waterVBO, 3, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+		waterVAO.Unbind();
+		waterVBO.Unbind();
+		waterIBO.Unbind();
+	}
 }
 
 void Chunk::Generate()
@@ -188,7 +244,7 @@ void Chunk::Generate()
 
 				if (y < blockHeight)
 				{
-					if (biomeType == Biome::HILLS || biomeType == Biome::DESERT)
+					if (biomeType == Biome::HILLS || biomeType == Biome::DESERT || biomeType == Biome::OCEAN)
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
 						g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
@@ -208,7 +264,10 @@ void Chunk::Generate()
 					}
 				}
 
-				if (biomeType != Biome::DESERT && y == -1 && y > blockHeight)
+				// Fill water from sea level (y=0) down to terrain surface
+				// Water appears where terrain is below sea level
+				const int SEA_LEVEL = 0;
+				if (biomeType != Biome::DESERT && y <= SEA_LEVEL && y > blockHeight)
 				{
 					vecY.push_back(std::make_unique<Block>(blockPos, BlockType::WATER));
 					// Water is not solid, no collision
@@ -253,6 +312,21 @@ void Chunk::CheckDistanceToPlayer(Player& player, Shader& shader)
 	}
 }
 
+bool Chunk::HasSolidBlockAt(int x, int z, size_t y) const
+{
+	if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
+		return false;
+	if (y >= blocksToRender[x][z].size())
+		return false;
+	auto& block = blocksToRender[x][z][y];
+	if (!block)
+		return false;
+	// Water is NOT solid - terrain should render faces adjacent to water
+	if (block->GetBlockType() == BlockType::WATER)
+		return false;
+	return true;
+}
+
 bool Chunk::HasBlockAt(int x, int z, size_t y) const
 {
 	if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
@@ -292,7 +366,7 @@ bool Chunk::RemoveBlockAtWorld(int worldX, int worldY, int worldZ)
 
 void Chunk::RebuildMesh()
 {
-	// Delete old buffers
+	// Delete old solid buffers
 	if (blocksVBO.vertexBufferId != 0)
 	{
 		glDeleteBuffers(1, &blocksVBO.vertexBufferId);
@@ -302,6 +376,18 @@ void Chunk::RebuildMesh()
 	{
 		glDeleteBuffers(1, &blocksIBO.indexBufferID);
 		blocksIBO.indexBufferID = 0;
+	}
+
+	// Delete old water buffers
+	if (waterVBO.vertexBufferId != 0)
+	{
+		glDeleteBuffers(1, &waterVBO.vertexBufferId);
+		waterVBO.vertexBufferId = 0;
+	}
+	if (waterIBO.indexBufferID != 0)
+	{
+		glDeleteBuffers(1, &waterIBO.indexBufferID);
+		waterIBO.indexBufferID = 0;
 	}
 
 	// Rebuild the mesh

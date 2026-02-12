@@ -58,6 +58,14 @@ void Player::CheckBlockInteraction(GLFWwindow* window)
 
 void Player::ApplyGravity(float deltaTime)
 {
+	if (isFlying)
+	{
+		// In fly mode, apply friction to all axes including Y
+		float frictionFactor = std::exp(-friction * deltaTime);
+		velocity *= frictionFactor;
+		return;
+	}
+
 	if (!isGrounded)
 	{
 		velocity.y -= gravity * deltaTime;
@@ -85,6 +93,18 @@ void Player::ApplyGravity(float deltaTime)
 
 void Player::CheckInputs(GLFWwindow* window, float deltaTime)
 {
+	// Toggle fly mode with F
+	bool fKeyDown = glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS;
+	if (fKeyDown && !flyKeyPressed)
+	{
+		isFlying = !isFlying;
+		flyKeyPressed = true;
+	}
+	else if (!fKeyDown)
+	{
+		flyKeyPressed = false;
+	}
+
 	glm::vec3 forward = glm::normalize(glm::vec3(rotation.x, 0, rotation.z));
 	glm::vec3 right = glm::normalize(glm::cross(rotation, upDirection));
 
@@ -105,10 +125,26 @@ void Player::CheckInputs(GLFWwindow* window, float deltaTime)
 		velocity += speed * deltaTime * right;
 	}
 
-	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && isGrounded)
+	if (isFlying)
 	{
-		velocity.y = jumpForce;
-		isGrounded = false;
+		// Fly up/down with space/shift
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			velocity.y += speed * deltaTime;
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			velocity.y -= speed * deltaTime;
+		}
+	}
+	else
+	{
+		// Normal jump
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && isGrounded)
+		{
+			velocity.y = jumpForce;
+			isGrounded = false;
+		}
 	}
 }
 

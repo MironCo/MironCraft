@@ -11,6 +11,7 @@ uniform sampler2D tex0;
 uniform sampler2D shadowMap;
 uniform vec3 lightDir;
 uniform vec3 viewPos;
+uniform int isWater;
 
 // Derive normal from face brightness (each face has unique brightness)
 vec3 GetNormalFromBrightness(float brightness)
@@ -89,5 +90,13 @@ void main()
 	vec3 gray = vec3(dot(finalColor, vec3(0.299, 0.587, 0.114)));
 	finalColor = mix(gray, finalColor, 1.3);
 
-	FragColor = vec4(finalColor, texel.a);
+	float alpha = texel.a;
+	if (isWater == 1)
+	{
+		// Tint water blue and make transparent
+		finalColor = mix(finalColor, vec3(0.2, 0.5, 0.8), 0.4);
+		alpha = 0.6;
+	}
+
+	FragColor = vec4(finalColor, alpha);
 }

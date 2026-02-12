@@ -27,11 +27,18 @@ private:
 	int amplitude = 4;
 
 	int totalIndices = 0;
+	int totalWaterIndices = 0;
 
 	glm::mat4 model = glm::mat4(1.0f);
 	VertexArray chunkVAO;
 	VertexBuffer blocksVBO;
 	IndexBuffer blocksIBO;
+
+	// Separate buffers for water (transparent)
+	VertexArray waterVAO;
+	VertexBuffer waterVBO;
+	IndexBuffer waterIBO;
+
 	Texture texture;
 	bool hasGenerated = false;
 
@@ -40,6 +47,7 @@ public:
 
 	Chunk(glm::vec2 position, int randomOffset, int divisor, Shader& shader, Biome biome);
 	void DrawChunk(Shader& shader);
+	void DrawWater(Shader& shader);
 	void BatchBlocks();
 	void Generate();
 	void CheckDistanceToPlayer(Player& player, Shader& shader);
@@ -54,5 +62,6 @@ public:
 	static int GetChunkSize() { return CHUNK_SIZE; }
 
 private:
+	bool HasSolidBlockAt(int x, int z, size_t y) const;
 	bool HasBlockAt(int x, int z, size_t y) const;
 };

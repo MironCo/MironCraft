@@ -114,7 +114,7 @@ void Renderer::Draw(Shader& shader, Player& player)
 	// Make sure we're back on texture unit 0 for the block textures
 	glActiveTexture(GL_TEXTURE0);
 
-	// Draw chunks
+	// Draw opaque chunks first
 	for (auto& chunk : chunksToRender)
 	{
 		if (chunk->isLoaded)
@@ -122,6 +122,25 @@ void Renderer::Draw(Shader& shader, Player& player)
 			chunk->DrawChunk(shader);
 		}
 	}
+
+	// Draw water with transparency
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glDepthMask(GL_FALSE); // Don't write to depth buffer for transparent objects
+
+	glUniform1i(glGetUniformLocation(shader.shaderProgramID, "isWater"), 1);
+
+	for (auto& chunk : chunksToRender)
+	{
+		if (chunk->isLoaded)
+		{
+			chunk->DrawWater(shader);
+		}
+	}
+
+	glUniform1i(glGetUniformLocation(shader.shaderProgramID, "isWater"), 0);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
 }
 
 void Renderer::RemoveBlock(int worldX, int worldY, int worldZ)
