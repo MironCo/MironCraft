@@ -16,6 +16,9 @@ BIN_DIR = bin
 # Source files
 SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/stb.cpp \
+          $(SRC_DIR)/Application.cpp \
+          $(SRC_DIR)/Window.cpp \
+          $(SRC_DIR)/Game.cpp \
           $(SRC_DIR)/VertexBuffer.cpp \
           $(SRC_DIR)/IndexBuffer.cpp \
           $(SRC_DIR)/VertexArray.cpp \
@@ -32,6 +35,9 @@ SOURCES = $(SRC_DIR)/main.cpp \
 # Object files
 OBJECTS = $(BUILD_DIR)/main.o \
           $(BUILD_DIR)/stb.o \
+          $(BUILD_DIR)/Application.o \
+          $(BUILD_DIR)/Window.o \
+          $(BUILD_DIR)/Game.o \
           $(BUILD_DIR)/VertexBuffer.o \
           $(BUILD_DIR)/IndexBuffer.o \
           $(BUILD_DIR)/VertexArray.o \
@@ -61,56 +67,8 @@ $(TARGET): $(OBJECTS)
 	$(CXX) $(OBJECTS) $(LDFLAGS) $(LIBS) -o $(TARGET)
 	@echo "Build complete! Run with: ./$(TARGET)"
 
-# Compile main.cpp
-$(BUILD_DIR)/main.o: $(SRC_DIR)/main.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile stb.cpp
-$(BUILD_DIR)/stb.o: $(SRC_DIR)/stb.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile VertexBuffer.cpp
-$(BUILD_DIR)/VertexBuffer.o: $(SRC_DIR)/VertexBuffer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile IndexBuffer.cpp
-$(BUILD_DIR)/IndexBuffer.o: $(SRC_DIR)/IndexBuffer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile VertexArray.cpp
-$(BUILD_DIR)/VertexArray.o: $(SRC_DIR)/VertexArray.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Shader.cpp
-$(BUILD_DIR)/Shader.o: $(SRC_DIR)/Shader.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Texture.cpp
-$(BUILD_DIR)/Texture.o: $(SRC_DIR)/Texture.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Block.cpp
-$(BUILD_DIR)/Block.o: $(SRC_DIR)/Block.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Tree.cpp
-$(BUILD_DIR)/Tree.o: $(SRC_DIR)/Tree.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Chunk.cpp
-$(BUILD_DIR)/Chunk.o: $(SRC_DIR)/Chunk.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Renderer.cpp
-$(BUILD_DIR)/Renderer.o: $(SRC_DIR)/Renderer.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Camera.cpp
-$(BUILD_DIR)/Camera.o: $(SRC_DIR)/Camera.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
-
-# Compile Common.cpp
-$(BUILD_DIR)/Common.o: $(SRC_DIR)/Common.cpp
+# Pattern rule for compiling .cpp files
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
 
 # Compile glad.c

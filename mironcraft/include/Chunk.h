@@ -1,10 +1,9 @@
 #pragma once
 #include "Camera.h"
 #include "Block.h"
-#include "Tree.h"
 
-#include <thread>
-#include <future>
+#include <memory>
+#include <vector>
 
 enum Biome
 {
@@ -14,7 +13,7 @@ enum Biome
 class Chunk
 {
 private:
-	std::vector<std::vector<std::vector<Block*>>> blocksToRender;
+	std::vector<std::vector<std::vector<std::unique_ptr<Block>>>> blocksToRender;
 	Biome biomeType = Biome::GRASSLAND;
 
 	static const int CHUNK_SIZE = 16;
@@ -35,11 +34,13 @@ private:
 	IndexBuffer blocksIBO;
 	Texture texture;
 	bool hasGenerated = false;
+
 public:
 	bool isLoaded = false;
-	Chunk(glm::vec2 _position, int _randomOffset, int _divisor, Shader& shader, Biome _biome);
+
+	Chunk(glm::vec2 position, int randomOffset, int divisor, Shader& shader, Biome biome);
 	void DrawChunk(Shader& shader, Camera& cam);
 	void BatchBlocks();
 	void Generate();
-	void CheckDistanceToCamera(Camera& _cam, Shader& shader);
+	void CheckDistanceToCamera(Camera& cam, Shader& shader);
 };

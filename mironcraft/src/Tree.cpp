@@ -1,43 +1,45 @@
 #include "Tree.h"
 #include <cstdlib>
 
-Tree::Tree(glm::vec3 position, std::vector<Block*>& placeToAdd)
+namespace Tree
 {
-	srand(position.x);
-	int treeHeight = rand() % 4 + 3;
-
-	// Generate Trunk
-	for (int i = 0; i < treeHeight; i++)
+	void Generate(glm::vec3 position, std::vector<std::unique_ptr<Block>>& blocks)
 	{
-		Block* treeBlock = new Block(glm::vec3(position.x, position.y + i, position.z), BlockType::LOG);
-		placeToAdd.push_back(treeBlock);
-	}
+		srand(static_cast<unsigned int>(position.x));
+		int treeHeight = rand() % 4 + 3;
 
-	// Generate Leaves
-	for (int x = -2; x < 3; x++)
-	{
-		for (int z = -2; z < 3; z++)
+		// Generate Trunk
+		for (int i = 0; i < treeHeight; i++)
 		{
-			for (int y = -1; y < 1; y++)
+			blocks.push_back(std::make_unique<Block>(
+				glm::vec3(position.x, position.y + i, position.z), BlockType::LOG));
+		}
+
+		// Generate Leaves
+		for (int x = -2; x < 3; x++)
+		{
+			for (int z = -2; z < 3; z++)
 			{
-				if (z != 0 || x != 0)
+				for (int y = -1; y < 1; y++)
 				{
-					// Skip corners
-					if ((x == -2 && z == -2) || (x == 2 && z == -2) || (x == -2 && z == 2) || (x == 2 && z == 2))
+					if (z != 0 || x != 0)
 					{
-						continue;
-					}
-					else
-					{
-						Block* treeBlock = new Block(glm::vec3(position.x + x, position.y + (treeHeight - 1) + y, position.z + z), BlockType::LEAVES);
-						placeToAdd.push_back(treeBlock);
+						// Skip corners
+						bool isCorner = (x == -2 && z == -2) || (x == 2 && z == -2) ||
+						                (x == -2 && z == 2) || (x == 2 && z == 2);
+						if (!isCorner)
+						{
+							blocks.push_back(std::make_unique<Block>(
+								glm::vec3(position.x + x, position.y + (treeHeight - 1) + y, position.z + z),
+								BlockType::LEAVES));
+						}
 					}
 				}
 			}
 		}
-	}
 
-	// Final Leaf On Top
-	Block* treeBlock = new Block(glm::vec3(position.x, position.y + treeHeight, position.z), BlockType::LEAVES);
-	placeToAdd.push_back(treeBlock);
+		// Final Leaf On Top
+		blocks.push_back(std::make_unique<Block>(
+			glm::vec3(position.x, position.y + treeHeight, position.z), BlockType::LEAVES));
+	}
 }

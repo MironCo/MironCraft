@@ -1,9 +1,9 @@
 #pragma once
-#include "Common.h"
 #include "Block.h"
+#include <memory>
+#include <vector>
 
-class Tree
+namespace Tree
 {
-public:
-	Tree(glm::vec3 position, std::vector<Block*>& placeToAdd);
-};
+	void Generate(glm::vec3 position, std::vector<std::unique_ptr<Block>>& blocks);
+}

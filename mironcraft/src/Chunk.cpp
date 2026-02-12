@@ -1,29 +1,27 @@
 #include "Chunk.h"
+#include "Tree.h"
 #include <GLM/gtc/noise.hpp>
+#include <cstdlib>
 
-Chunk::Chunk(glm::vec2 _position, int _randomOffset, int _divisor, Shader& shader, Biome _biome)
+Chunk::Chunk(glm::vec2 position, int _randomOffset, int _divisor, Shader& shader, Biome biome)
+	: biomeType(biome)
+	, chunkX(static_cast<int>(position.x))
+	, chunkZ(static_cast<int>(position.y))
+	, randomOffset(_randomOffset)
+	, divisor(_divisor)
+	, texture("res/textures/texture_Atlas.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE)
 {
-	biomeType = _biome;
-	isLoaded = false;
-	texture = Texture("res/textures/texture_Atlas.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	chunkX = _position.x;
-	chunkZ = _position.y;
-
-	randomOffset = _randomOffset;
-	divisor = _divisor;
-
-	if (biomeType == Biome::OCEAN)
+	switch (biomeType)
 	{
-		amplitude = 3;
-	} else if (biomeType == Biome::DESERT)
-	{
-		amplitude = 4;
-	} else if (biomeType == Biome::GRASSLAND || biomeType == Biome::FOREST)
-	{
-		amplitude = 4;
-	} else if (biomeType == Biome::HILLS)
-	{
-		amplitude = 10;
+		case Biome::OCEAN:
+			amplitude = 3;
+			break;
+		case Biome::HILLS:
+			amplitude = 10;
+			break;
+		default:
+			amplitude = 4;
+			break;
 	}
 }
 
@@ -32,8 +30,7 @@ void Chunk::DrawChunk(Shader& shader, Camera& cam)
 	shader.Activate();
 	chunkVAO.Bind();
 	texture.Bind();
-
-	glDrawElements(GL_TRIANGLES, totalBlocks*36, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, totalBlocks * 36, GL_UNSIGNED_INT, 0);
 }
 
 void Chunk::BatchBlocks()
@@ -47,12 +44,14 @@ void Chunk::BatchBlocks()
 	{
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
-			for (int y = 0; y < blocksToRender[x][z].size(); y++)
+			for (size_t y = 0; y < blocksToRender[x][z].size(); y++)
 			{
-				if (blocksToRender[x][z][y] != nullptr)
+				auto& block = blocksToRender[x][z][y];
+				if (block)
 				{
-					GLfloat* blockVertices = blocksToRender[x][z][y]->GetBlockVertsWithOffset(blocksToRender[x][z][y]->position, blocksToRender[x][z][y]->textureOffset, blocksToRender[x][z][y]->GetBlockType());
-					GLuint* blockIndices = blocksToRender[x][z][y]->blockIndices;
+					GLfloat* blockVertices = block->GetBlockVertsWithOffset(
+						block->position, block->textureOffset, block->GetBlockType());
+					GLuint* blockIndices = block->blockIndices;
 
 					for (int v = 0; v < 192; v++)
 					{
@@ -61,7 +60,7 @@ void Chunk::BatchBlocks()
 
 					for (int i = 0; i < 36; i++)
 					{
-						blockIndsVec.push_back((blockIndices[i] + (blockNum * 24)));
+						blockIndsVec.push_back(blockIndices[i] + (blockNum * 24));
 					}
 					blockNum++;
 				}
@@ -71,12 +70,10 @@ void Chunk::BatchBlocks()
 
 	chunkVAO.Bind();
 
-	// Generate and bind vertex buffer
 	glGenBuffers(1, &blocksVBO.vertexBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, blocksVBO.vertexBufferId);
 	glBufferData(GL_ARRAY_BUFFER, blockVertsVec.size() * sizeof(float), blockVertsVec.data(), GL_STATIC_DRAW);
 
-	// Generate and bind index buffer
 	glGenBuffers(1, &blocksIBO.indexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, blocksIBO.indexBufferID);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, blockIndsVec.size() * sizeof(int), blockIndsVec.data(), GL_STATIC_DRAW);
@@ -98,86 +95,82 @@ void Chunk::Generate()
 
 	for (int x = 0; x < CHUNK_SIZE; x++)
 	{
-		std::vector<std::vector<Block*>> vecZY;
+		std::vector<std::vector<std::unique_ptr<Block>>> vecZY;
 		for (int z = 0; z < CHUNK_SIZE; z++)
 		{
-			int blockHeight = (int)round((glm::perlin(glm::vec2((x + randomOffset + +chunkOffsetX) / (float)(divisor), (z + randomOffset + chunkOffsetZ) / (float)(divisor)) +
-				(glm::simplex(glm::vec2((x + randomOffset + chunkOffsetX) / (float)(divisor * 2), (z + randomOffset + chunkOffsetZ) / (float)(divisor * 3))) + 1) / 2)
-				* (amplitude)) + biomeType);
+			float noiseVal = glm::perlin(glm::vec2(
+				(x + randomOffset + chunkOffsetX) / static_cast<float>(divisor),
+				(z + randomOffset + chunkOffsetZ) / static_cast<float>(divisor)));
+			float simplexVal = glm::simplex(glm::vec2(
+				(x + randomOffset + chunkOffsetX) / static_cast<float>(divisor * 2),
+				(z + randomOffset + chunkOffsetZ) / static_cast<float>(divisor * 3)));
 
-			std::vector<Block*> vecY;
+			int blockHeight = static_cast<int>(round((noiseVal + (simplexVal + 1) / 2) * amplitude)) + biomeType;
+
+			std::vector<std::unique_ptr<Block>> vecY;
 			for (int y = -CHUNK_DEPTH; y < blockHeight + 5; y++)
 			{
+				glm::vec3 blockPos(x + chunkOffsetX, y, z + chunkOffsetZ);
+
 				if (y == blockHeight)
 				{
 					if (biomeType == Biome::GRASSLAND || biomeType == Biome::HILLS || biomeType == Biome::FOREST)
 					{
-						Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::GRASS);
-						vecY.push_back(block);
-					} else if (biomeType == Biome::DESERT || biomeType == Biome::OCEAN)
+						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::GRASS));
+					}
+					else if (biomeType == Biome::DESERT || biomeType == Biome::OCEAN)
 					{
-						Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::SAND);
-						vecY.push_back(block);
+						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::SAND));
 					}
 				}
+
 				if (y < blockHeight)
 				{
 					if (biomeType == Biome::HILLS || biomeType == Biome::DESERT)
 					{
-						Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::STONE);
-						vecY.push_back(block);
-					} else if (biomeType == Biome::GRASSLAND || biomeType == Biome::FOREST)
+						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
+					}
+					else if (biomeType == Biome::GRASSLAND || biomeType == Biome::FOREST)
 					{
 						if (y > blockHeight - 3)
 						{
-							Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::DIRT);
-							vecY.push_back(block);
+							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::DIRT));
 						}
-						else {
-							Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::STONE);
-							vecY.push_back(block);
+						else
+						{
+							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
 						}
 					}
 				}
-				if (biomeType != Biome::DESERT)
+
+				if (biomeType != Biome::DESERT && y == -1 && y > blockHeight)
 				{
-					if (y == -1 && y > blockHeight)
-					{
-						Block* block = new Block(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), BlockType::WATER);
-						vecY.push_back(block);
-					}
+					vecY.push_back(std::make_unique<Block>(blockPos, BlockType::WATER));
 				}
+
 				if (y == blockHeight + 1)
 				{
-					if (biomeType == Biome::FOREST)
+					srand((x + z) * y + z);
+					int treeChance = rand() % (biomeType == Biome::FOREST ? 70 : 220);
+					if ((biomeType == Biome::FOREST || biomeType == Biome::HILLS) && treeChance == 3)
 					{
-						srand((x + z) * y + z);
-						int treeChance = rand() % 70;
-						if (treeChance == 3)
-						{
-							Tree* tree = new Tree(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), vecY);
-						}
-					} else if (biomeType == Biome::HILLS)
-					{
-						srand((x + z) * y + z);
-						int treeChance = rand() % 220;
-						if (treeChance == 3)
-						{
-							Tree* tree = new Tree(glm::vec3(x + chunkOffsetX, y, z + chunkOffsetZ), vecY);
-						}
+						Tree::Generate(blockPos, vecY);
 					}
 				}
+
 				totalBlocks++;
 			}
-			vecZY.push_back(vecY);
+			vecZY.push_back(std::move(vecY));
 		}
-		blocksToRender.push_back(vecZY);
+		blocksToRender.push_back(std::move(vecZY));
 	}
 }
 
-void Chunk::CheckDistanceToCamera(Camera& _cam, Shader& shader)
+void Chunk::CheckDistanceToCamera(Camera& cam, Shader& shader)
 {
-	float distanceToCamera = std::sqrt(sqr(_cam.position.x - ((chunkX * CHUNK_SIZE) + CHUNK_SIZE * 0.5)) + sqr(_cam.position.z - ((chunkZ * CHUNK_SIZE) + CHUNK_SIZE * 0.5)));
+	float distanceToCamera = std::sqrt(
+		sqr(cam.position.x - ((chunkX * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)) +
+		sqr(cam.position.z - ((chunkZ * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)));
 
 	if (distanceToCamera > CHUNK_SIZE * 4)
 	{
@@ -186,7 +179,7 @@ void Chunk::CheckDistanceToCamera(Camera& _cam, Shader& shader)
 	else
 	{
 		isLoaded = true;
-		if (hasGenerated == false)
+		if (!hasGenerated)
 		{
 			Generate();
 			BatchBlocks();
