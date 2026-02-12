@@ -261,3 +261,49 @@ bool Chunk::HasBlockAt(int x, int z, size_t y) const
 		return false;
 	return blocksToRender[x][z][y] != nullptr;
 }
+
+bool Chunk::RemoveBlockAtWorld(int worldX, int worldY, int worldZ)
+{
+	int chunkOffsetX = chunkX * CHUNK_SIZE;
+	int chunkOffsetZ = chunkZ * CHUNK_SIZE;
+
+	// Convert world coords to local chunk coords
+	int localX = worldX - chunkOffsetX;
+	int localZ = worldZ - chunkOffsetZ;
+
+	// Check if this block is in this chunk
+	if (localX < 0 || localX >= CHUNK_SIZE || localZ < 0 || localZ >= CHUNK_SIZE)
+		return false;
+
+	// Find the block in the Y array
+	// We need to search through the Y array since blocks may be at different Y positions
+	for (size_t i = 0; i < blocksToRender[localX][localZ].size(); i++)
+	{
+		auto& block = blocksToRender[localX][localZ][i];
+		if (block && static_cast<int>(block->position.y) == worldY)
+		{
+			blocksToRender[localX][localZ][i].reset();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void Chunk::RebuildMesh()
+{
+	// Delete old buffers
+	if (blocksVBO.vertexBufferId != 0)
+	{
+		glDeleteBuffers(1, &blocksVBO.vertexBufferId);
+		blocksVBO.vertexBufferId = 0;
+	}
+	if (blocksIBO.indexBufferID != 0)
+	{
+		glDeleteBuffers(1, &blocksIBO.indexBufferID);
+		blocksIBO.indexBufferID = 0;
+	}
+
+	// Rebuild the mesh
+	BatchBlocks();
+}

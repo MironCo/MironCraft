@@ -45,6 +45,7 @@ public:
 
 	bool isGrounded = false;
 	bool cursorLocked = true;
+	bool leftMousePressed = false;
 
 	Player() = default;
 	Player(glm::vec3 _pos);
@@ -54,6 +55,9 @@ public:
 	void ApplyGravity(float deltaTime);
 	void CheckInputs(GLFWwindow* window, float deltaTime);
 	void CheckMouseInput(GLFWwindow* window);
+	void CheckBlockInteraction(GLFWwindow* window);
+
+	glm::vec3 GetEyePosition() const;
 
 	void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
 };

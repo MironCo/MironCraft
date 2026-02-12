@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Chunk.h"
 #include "Common.h"
+#include "Collision.h"
 #include <GLM/gtc/type_ptr.hpp>
 
 std::vector<std::unique_ptr<Chunk>> Renderer::chunksToRender;
@@ -89,6 +90,22 @@ void Renderer::Draw(Shader& shader, Player& player)
 		if (chunk->isLoaded)
 		{
 			chunk->DrawChunk(shader);
+		}
+	}
+}
+
+void Renderer::RemoveBlock(int worldX, int worldY, int worldZ)
+{
+	// Remove from collision world
+	g_CollisionWorld.RemoveBlock(worldX, worldY, worldZ);
+
+	// Find the chunk containing this block and update its mesh
+	for (auto& chunk : chunksToRender)
+	{
+		if (chunk->isLoaded && chunk->RemoveBlockAtWorld(worldX, worldY, worldZ))
+		{
+			chunk->RebuildMesh();
+			break;
 		}
 	}
 }

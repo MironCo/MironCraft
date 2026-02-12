@@ -44,6 +44,15 @@ public:
 	void Generate();
 	void CheckDistanceToPlayer(Player& player, Shader& shader);
 
+	// Remove a block at world position, returns true if block was in this chunk
+	bool RemoveBlockAtWorld(int worldX, int worldY, int worldZ);
+	void RebuildMesh();
+
+	// Get chunk boundaries
+	int GetChunkX() const { return chunkX; }
+	int GetChunkZ() const { return chunkZ; }
+	static int GetChunkSize() { return CHUNK_SIZE; }
+
 private:
 	bool HasBlockAt(int x, int z, size_t y) const;
 };

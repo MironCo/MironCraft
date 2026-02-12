@@ -1,4 +1,7 @@
 #include "Player.h"
+#include "Raycast.h"
+#include "Collision.h"
+#include "Renderer.h"
 #include <cmath>
 
 Player::Player(glm::vec3 _pos)
@@ -19,7 +22,38 @@ void Player::Update(GLFWwindow* window, float deltaTime)
 {
 	CheckInputs(window, deltaTime);
 	CheckMouseInput(window);
+	CheckBlockInteraction(window);
 	ApplyGravity(deltaTime);
+}
+
+glm::vec3 Player::GetEyePosition() const
+{
+	return position + glm::vec3(0.0f, -0.2f, 0.0f);
+}
+
+void Player::CheckBlockInteraction(GLFWwindow* window)
+{
+	if (!cursorLocked) return;
+
+	bool leftDown = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+
+	// Only break on initial click (not hold)
+	if (leftDown && !leftMousePressed)
+	{
+		leftMousePressed = true;
+
+		// Cast ray from eye position in look direction
+		auto hit = Raycast::Cast(GetEyePosition(), rotation, 5.0f);
+		if (hit)
+		{
+			// Remove the block from world (collision + visual)
+			Renderer::RemoveBlock(hit->blockPos.x, hit->blockPos.y, hit->blockPos.z);
+		}
+	}
+	else if (!leftDown)
+	{
+		leftMousePressed = false;
+	}
 }
 
 void Player::ApplyGravity(float deltaTime)
@@ -102,6 +136,7 @@ void Player::CheckMouseInput(GLFWwindow* window)
 		}
 
 		rotation = glm::rotate(rotation, glm::radians(-rotY), upDirection);
+		rotation = glm::normalize(rotation);
 		glfwSetCursorPos(window, (WindowData::width / 2), (WindowData::height / 2));
 	}
 	else

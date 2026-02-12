@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "Renderer.h"
 #include "Collision.h"
+#include "Crosshair.h"
 
 #include <GLM/glm.hpp>
 #include <GLM/gtc/matrix_transform.hpp>
@@ -44,6 +45,8 @@ void Window::Create()
 	Renderer::Init();
 	Game::Start(shaderProgram);
 
+	Crosshair crosshair;
+
 	Clear();
 	glfwSwapBuffers(window);
 
@@ -64,6 +67,9 @@ void Window::Create()
 		player.Matrix(60.0f, 0.02f, 100.0f, shaderProgram, "cameraMatrix");
 
 		Renderer::Draw(shaderProgram, player);
+
+		// Draw crosshair on top
+		crosshair.Draw();
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
