@@ -8,10 +8,102 @@ std::vector<std::unique_ptr<Chunk>> Renderer::chunksToRender;
 std::unique_ptr<ShadowMap> Renderer::shadowMap;
 std::unique_ptr<Shader> Renderer::outlineShader;
 
+// Thread pool static members
+std::vector<std::thread> Renderer::workerThreads;
+std::queue<Chunk*> Renderer::workQueue;
+std::mutex Renderer::queueMutex;
+std::condition_variable Renderer::queueCV;
+std::atomic<bool> Renderer::shutdownWorkers{false};
+
+void Renderer::WorkerThread()
+{
+	while (true)
+	{
+		Chunk* chunk = nullptr;
+
+		{
+			std::unique_lock<std::mutex> lock(queueMutex);
+			queueCV.wait(lock, [] { return !workQueue.empty() || shutdownWorkers.load(); });
+
+			if (shutdownWorkers.load() && workQueue.empty())
+				return;
+
+			chunk = workQueue.front();
+			workQueue.pop();
+		}
+
+		if (chunk)
+		{
+			ChunkState currentState = chunk->GetState();
+
+			if (currentState == ChunkState::Generating)
+			{
+				// Generate block data
+				chunk->Generate();
+				// Set state to BuildingMesh and queue (atomically set before queue)
+				chunk->SetState(ChunkState::BuildingMesh);
+				QueueChunkWork(chunk);
+			}
+			else if (currentState == ChunkState::BuildingMesh)
+			{
+				// Build mesh on worker thread (no OpenGL!)
+				chunk->BuildMeshData();
+				chunk->SetState(ChunkState::ReadyForUpload);
+			}
+		}
+	}
+}
+
 void Renderer::Init()
 {
 	shadowMap = std::make_unique<ShadowMap>(2048, 2048);
 	outlineShader = std::make_unique<Shader>("res/shaders/outline.vert", "res/shaders/outline.frag");
+
+	// Start worker threads (use hardware concurrency - 1, min 1)
+	unsigned int numThreads = std::max(1u, std::thread::hardware_concurrency() - 1);
+	for (unsigned int i = 0; i < numThreads; i++)
+	{
+		workerThreads.emplace_back(WorkerThread);
+	}
+}
+
+void Renderer::Shutdown()
+{
+	// Signal workers to stop
+	shutdownWorkers.store(true);
+	queueCV.notify_all();
+
+	// Wait for all workers to finish
+	for (auto& thread : workerThreads)
+	{
+		if (thread.joinable())
+			thread.join();
+	}
+	workerThreads.clear();
+}
+
+void Renderer::QueueChunkWork(Chunk* chunk)
+{
+	{
+		std::lock_guard<std::mutex> lock(queueMutex);
+		workQueue.push(chunk);
+	}
+	queueCV.notify_one();
+}
+
+void Renderer::ProcessReadyChunks()
+{
+	// Process chunks that are ready for GPU upload (main thread only)
+	for (auto& chunk : chunksToRender)
+	{
+		if (chunk->GetState() == ChunkState::ReadyForUpload)
+		{
+			chunk->UploadMeshToGPU();
+			chunk->ApplyCollision();
+			chunk->SetState(ChunkState::Ready);
+			chunk->isLoaded = true;
+		}
+	}
 }
 
 void Renderer::AddToRender(std::unique_ptr<Chunk> chunk)
@@ -74,11 +166,23 @@ void Renderer::Draw(Shader& shader, Player& player)
 	// First do shadow pass
 	DrawShadowPass(player);
 
-	// Update chunk loading
+	// Queue chunks for background generation/mesh building
 	for (auto& chunk : chunksToRender)
 	{
+		// Check if chunk needs to start loading
+		if (chunk->ShouldStartLoading(player))
+		{
+			chunk->SetState(ChunkState::Generating);
+			QueueChunkWork(chunk.get());
+		}
+		// Note: mesh building is queued by worker after generation completes
+
+		// Update loaded state based on distance
 		chunk->CheckDistanceToPlayer(player, shader);
 	}
+
+	// Process chunks ready for GPU upload (main thread)
+	ProcessReadyChunks();
 
 	// Draw outlines first (back faces, black)
 	DrawOutlinePass(player);

@@ -1,20 +1,31 @@
 #include "Tree.h"
-#include "Collision.h"
-#include <cstdlib>
+
+// Thread-safe hash function for deterministic tree height
+static unsigned int HashPosition(int x, int z)
+{
+	unsigned int h = static_cast<unsigned int>(x * 73856093 ^ z * 19349663);
+	h ^= h >> 16;
+	h *= 0x85ebca6b;
+	h ^= h >> 13;
+	h *= 0xc2b2ae35;
+	h ^= h >> 16;
+	return h;
+}
 
 namespace Tree
 {
 	void Generate(glm::vec3 position, std::vector<std::unique_ptr<Block>>& blocks)
 	{
-		srand(static_cast<unsigned int>(position.x));
-		int treeHeight = rand() % 4 + 3;
+		// Use deterministic hash instead of srand/rand (thread-safe)
+		unsigned int hash = HashPosition(static_cast<int>(position.x), static_cast<int>(position.z));
+		int treeHeight = (hash % 4) + 3;
 
 		// Generate Trunk
 		for (int i = 0; i < treeHeight; i++)
 		{
 			glm::vec3 logPos(position.x, position.y + i, position.z);
 			blocks.push_back(std::make_unique<Block>(logPos, BlockType::LOG));
-			g_CollisionWorld.AddBlock(logPos.x, logPos.y, logPos.z);
+			// Collision is added later in Chunk::ApplyCollision()
 		}
 
 		// Generate Leaves
@@ -33,7 +44,7 @@ namespace Tree
 						{
 							glm::vec3 leafPos(position.x + x, position.y + (treeHeight - 1) + y, position.z + z);
 							blocks.push_back(std::make_unique<Block>(leafPos, BlockType::LEAVES));
-							g_CollisionWorld.AddBlock(leafPos.x, leafPos.y, leafPos.z);
+							// Collision is added later in Chunk::ApplyCollision()
 						}
 					}
 				}
@@ -43,6 +54,6 @@ namespace Tree
 		// Final Leaf On Top
 		glm::vec3 topLeafPos(position.x, position.y + treeHeight, position.z);
 		blocks.push_back(std::make_unique<Block>(topLeafPos, BlockType::LEAVES));
-		g_CollisionWorld.AddBlock(topLeafPos.x, topLeafPos.y, topLeafPos.z);
+		// Collision is added later in Chunk::ApplyCollision()
 	}
 }

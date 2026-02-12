@@ -85,12 +85,15 @@ static void AddFace(int face, GLfloat* blockVertices, int& currentVertex,
 	currentVertex += 4;
 }
 
-void Chunk::BatchBlocks()
+// CPU-side mesh building - can run on worker thread (no OpenGL calls!)
+void Chunk::BuildMeshData()
 {
-	std::vector<GLfloat> blockVertsVec;
-	std::vector<GLuint> blockIndsVec;
-	std::vector<GLfloat> waterVertsVec;
-	std::vector<GLuint> waterIndsVec;
+	// Clear previous data
+	meshData.blockVerts.clear();
+	meshData.blockInds.clear();
+	meshData.waterVerts.clear();
+	meshData.waterInds.clear();
+	meshData.collisionBlocks.clear();
 
 	int currentVertex = 0;
 	int currentWaterVertex = 0;
@@ -143,31 +146,44 @@ void Chunk::BatchBlocks()
 						{
 							if (isWater)
 							{
-								AddFace(face, blockVertices, currentWaterVertex, waterVertsVec, waterIndsVec);
+								AddFace(face, blockVertices, currentWaterVertex, meshData.waterVerts, meshData.waterInds);
 							}
 							else
 							{
-								AddFace(face, blockVertices, currentVertex, blockVertsVec, blockIndsVec);
+								AddFace(face, blockVertices, currentVertex, meshData.blockVerts, meshData.blockInds);
 							}
 						}
+					}
+
+					// Track collision blocks (non-water only)
+					if (!isWater)
+					{
+						meshData.collisionBlocks.push_back(glm::ivec3(
+							static_cast<int>(block->position.x),
+							static_cast<int>(block->position.y),
+							static_cast<int>(block->position.z)));
 					}
 				}
 			}
 		}
 	}
+}
 
+// GPU-side mesh upload - MUST run on main thread
+void Chunk::UploadMeshToGPU()
+{
 	// Setup solid block mesh
-	totalIndices = static_cast<int>(blockIndsVec.size());
+	totalIndices = static_cast<int>(meshData.blockInds.size());
 
 	chunkVAO.Bind();
 
 	glGenBuffers(1, &blocksVBO.vertexBufferId);
 	glBindBuffer(GL_ARRAY_BUFFER, blocksVBO.vertexBufferId);
-	glBufferData(GL_ARRAY_BUFFER, blockVertsVec.size() * sizeof(float), blockVertsVec.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, meshData.blockVerts.size() * sizeof(float), meshData.blockVerts.data(), GL_STATIC_DRAW);
 
 	glGenBuffers(1, &blocksIBO.indexBufferID);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, blocksIBO.indexBufferID);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, blockIndsVec.size() * sizeof(int), blockIndsVec.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData.blockInds.size() * sizeof(int), meshData.blockInds.data(), GL_STATIC_DRAW);
 
 	chunkVAO.Link(blocksVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 	chunkVAO.Link(blocksVBO, 1, 1, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -179,7 +195,7 @@ void Chunk::BatchBlocks()
 	blocksIBO.Unbind();
 
 	// Setup water mesh
-	totalWaterIndices = static_cast<int>(waterIndsVec.size());
+	totalWaterIndices = static_cast<int>(meshData.waterInds.size());
 
 	if (totalWaterIndices > 0)
 	{
@@ -187,11 +203,11 @@ void Chunk::BatchBlocks()
 
 		glGenBuffers(1, &waterVBO.vertexBufferId);
 		glBindBuffer(GL_ARRAY_BUFFER, waterVBO.vertexBufferId);
-		glBufferData(GL_ARRAY_BUFFER, waterVertsVec.size() * sizeof(float), waterVertsVec.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, meshData.waterVerts.size() * sizeof(float), meshData.waterVerts.data(), GL_STATIC_DRAW);
 
 		glGenBuffers(1, &waterIBO.indexBufferID);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, waterIBO.indexBufferID);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, waterIndsVec.size() * sizeof(int), waterIndsVec.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, meshData.waterInds.size() * sizeof(int), meshData.waterInds.data(), GL_STATIC_DRAW);
 
 		waterVAO.Link(waterVBO, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 		waterVAO.Link(waterVBO, 1, 1, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -202,6 +218,27 @@ void Chunk::BatchBlocks()
 		waterVBO.Unbind();
 		waterIBO.Unbind();
 	}
+
+	// Clear CPU-side data to free memory
+	meshData.blockVerts.clear();
+	meshData.blockVerts.shrink_to_fit();
+	meshData.blockInds.clear();
+	meshData.blockInds.shrink_to_fit();
+	meshData.waterVerts.clear();
+	meshData.waterVerts.shrink_to_fit();
+	meshData.waterInds.clear();
+	meshData.waterInds.shrink_to_fit();
+}
+
+// Apply collision data - MUST run on main thread (uses global collision world)
+void Chunk::ApplyCollision()
+{
+	for (const auto& pos : meshData.collisionBlocks)
+	{
+		g_CollisionWorld.AddBlock(pos.x, pos.y, pos.z);
+	}
+	meshData.collisionBlocks.clear();
+	meshData.collisionBlocks.shrink_to_fit();
 }
 
 // Get biome parameters for blending
@@ -408,7 +445,7 @@ void Chunk::Generate()
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::SAND));
 					}
-					g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
+					// Collision is added later in ApplyCollision()
 				}
 
 				if (y < blockHeight)
@@ -422,7 +459,7 @@ void Chunk::Generate()
 					{
 						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
 					}
-					g_CollisionWorld.AddBlock(blockPos.x, blockPos.y, blockPos.z);
+					// Collision is added later in ApplyCollision()
 				}
 
 				// Water generation
@@ -432,12 +469,17 @@ void Chunk::Generate()
 					vecY.push_back(std::make_unique<Block>(blockPos, BlockType::WATER));
 				}
 
-				// Tree generation
+				// Tree generation (using deterministic hash for thread-safety)
 				if (y == blockHeight + 1 && treeWeight > 0.3f && avgTreeChance > 0.0f)
 				{
-					srand(static_cast<unsigned int>(worldX * 73856093 ^ worldZ * 19349663));
+					// Thread-safe deterministic hash
+					unsigned int hash = static_cast<unsigned int>(worldX * 73856093 ^ worldZ * 19349663);
+					hash ^= hash >> 16;
+					hash *= 0x85ebca6b;
+					hash ^= hash >> 13;
+
 					int effectiveTreeChance = static_cast<int>(1.0f / avgTreeChance);
-					if (effectiveTreeChance > 0 && (rand() % effectiveTreeChance) == 0)
+					if (effectiveTreeChance > 0 && (hash % effectiveTreeChance) == 0)
 					{
 						Tree::Generate(blockPos, vecY);
 					}
@@ -461,19 +503,37 @@ void Chunk::CheckDistanceToPlayer(Player& player, Shader& shader)
 	}
 	else
 	{
-		isLoaded = true;
-		if (!hasGenerated)
+		// Mark as loaded when ready (loading is handled by Renderer thread pool)
+		if (state.load() == ChunkState::Ready)
 		{
-			Generate();
-			BatchBlocks();
-			hasGenerated = true;
+			isLoaded = true;
 		}
 	}
+}
+
+// Request this chunk to start loading (called from Renderer)
+bool Chunk::ShouldStartLoading(const Player& player) const
+{
+	float distanceToPlayer = std::sqrt(
+		sqr(player.position.x - ((chunkX * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)) +
+		sqr(player.position.z - ((chunkZ * CHUNK_SIZE) + CHUNK_SIZE * 0.5f)));
+
+	return distanceToPlayer <= CHUNK_SIZE * 4 && state.load() == ChunkState::Unloaded;
+}
+
+bool Chunk::ShouldBuildMesh() const
+{
+	return state.load() == ChunkState::Generated;
 }
 
 bool Chunk::HasSolidBlockAt(int x, int z, size_t y) const
 {
 	if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
+		return false;
+	// Safety check: ensure blocksToRender is fully populated
+	if (static_cast<size_t>(x) >= blocksToRender.size())
+		return false;
+	if (static_cast<size_t>(z) >= blocksToRender[x].size())
 		return false;
 	if (y >= blocksToRender[x][z].size())
 		return false;
@@ -489,6 +549,11 @@ bool Chunk::HasSolidBlockAt(int x, int z, size_t y) const
 bool Chunk::HasBlockAt(int x, int z, size_t y) const
 {
 	if (x < 0 || x >= CHUNK_SIZE || z < 0 || z >= CHUNK_SIZE)
+		return false;
+	// Safety check: ensure blocksToRender is fully populated
+	if (static_cast<size_t>(x) >= blocksToRender.size())
+		return false;
+	if (static_cast<size_t>(z) >= blocksToRender[x].size())
 		return false;
 	if (y >= blocksToRender[x][z].size())
 		return false;
@@ -549,6 +614,7 @@ void Chunk::RebuildMesh()
 		waterIBO.indexBufferID = 0;
 	}
 
-	// Rebuild the mesh
-	BatchBlocks();
+	// Rebuild the mesh (synchronous for now - called from main thread)
+	BuildMeshData();
+	UploadMeshToGPU();
 }

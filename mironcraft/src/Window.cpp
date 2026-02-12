@@ -89,6 +89,7 @@ void Window::Create()
 
 void Window::Close()
 {
+	Renderer::Shutdown();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }

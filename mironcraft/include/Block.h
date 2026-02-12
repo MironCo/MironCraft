@@ -4,7 +4,7 @@
 #include <cstring>
 
 #include "Common.h"
-#include "VertexArray.h"
+// VertexArray.h removed - not needed for batched rendering
 #include "IndexBuffer.h"
 #include "Texture.h"
 
@@ -50,7 +50,6 @@ public:
 	};
 
 	glm::vec3 position = glm::vec3(0.0f);
-	VertexArray VAO;
 
 	Block(glm::vec3 _pos, BlockType type);
 	BlockType GetBlockType();
