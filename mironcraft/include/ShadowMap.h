@@ -23,6 +23,7 @@ public:
 	void BindForWriting();
 	void BindForReading(GLenum textureUnit);
 	void UpdateLightSpaceMatrix(const glm::vec3& center, float orthoSize = 64.0f);
+	void RotateLight(float angle);
 
 	GLuint GetDepthMap() const { return depthMap; }
 	unsigned int GetWidth() const { return shadowWidth; }

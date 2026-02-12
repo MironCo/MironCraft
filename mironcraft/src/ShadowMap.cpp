@@ -1,5 +1,6 @@
 #include "ShadowMap.h"
 #include <GLM/gtc/type_ptr.hpp>
+#include <GLM/gtx/rotate_vector.hpp>
 
 ShadowMap::ShadowMap(unsigned int width, unsigned int height)
 	: shadowWidth(width)
@@ -72,4 +73,11 @@ void ShadowMap::UpdateLightSpaceMatrix(const glm::vec3& center, float orthoSize)
 		glGetUniformLocation(shadowShader.shaderProgramID, "lightSpaceMatrix"),
 		1, GL_FALSE, glm::value_ptr(lightSpaceMatrix)
 	);
+}
+
+void ShadowMap::RotateLight(float angle)
+{
+	// Rotate light direction around the Y axis
+	lightDir = glm::rotateY(lightDir, glm::radians(angle));
+	lightDir = glm::normalize(lightDir);
 }

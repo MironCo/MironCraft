@@ -6,10 +6,12 @@
 
 std::vector<std::unique_ptr<Chunk>> Renderer::chunksToRender;
 std::unique_ptr<ShadowMap> Renderer::shadowMap;
+std::unique_ptr<Shader> Renderer::outlineShader;
 
 void Renderer::Init()
 {
 	shadowMap = std::make_unique<ShadowMap>(2048, 2048);
+	outlineShader = std::make_unique<Shader>("res/shaders/outline.vert", "res/shaders/outline.frag");
 }
 
 void Renderer::AddToRender(std::unique_ptr<Chunk> chunk)
@@ -42,6 +44,31 @@ void Renderer::DrawShadowPass(Player& player)
 	glViewport(0, 0, WindowData::framebufferWidth, WindowData::framebufferHeight);
 }
 
+void Renderer::DrawOutlinePass(Player& player)
+{
+	if (!outlineShader) return;
+
+	// Enable culling just for outline pass - render front faces in black (slightly expanded)
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_FRONT);
+
+	outlineShader->Activate();
+
+	// Set camera matrix
+	player.Matrix(60.0f, 0.02f, 100.0f, *outlineShader, "cameraMatrix");
+
+	for (auto& chunk : chunksToRender)
+	{
+		if (chunk->isLoaded)
+		{
+			chunk->DrawChunk(*outlineShader);
+		}
+	}
+
+	// Disable culling for main pass
+	glDisable(GL_CULL_FACE);
+}
+
 void Renderer::Draw(Shader& shader, Player& player)
 {
 	// First do shadow pass
@@ -52,6 +79,9 @@ void Renderer::Draw(Shader& shader, Player& player)
 	{
 		chunk->CheckDistanceToPlayer(player, shader);
 	}
+
+	// Draw outlines first (back faces, black)
+	DrawOutlinePass(player);
 
 	// Set shadow uniforms on main shader
 	shader.Activate();
@@ -107,5 +137,13 @@ void Renderer::RemoveBlock(int worldX, int worldY, int worldZ)
 			chunk->RebuildMesh();
 			break;
 		}
+	}
+}
+
+void Renderer::RotateLight(float angle)
+{
+	if (shadowMap)
+	{
+		shadowMap->RotateLight(angle);
 	}
 }

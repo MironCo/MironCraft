@@ -10,18 +10,23 @@ std::optional<RayHit> Raycast::Cast(
 	// DDA (Digital Differential Analyzer) algorithm for voxel traversal
 	glm::vec3 rayDir = glm::normalize(direction);
 
+	// Start slightly ahead to avoid issues at origin
+	glm::vec3 rayOrigin = origin + rayDir * 0.01f;
+
 	// Current voxel position
 	glm::ivec3 mapPos(
-		static_cast<int>(std::floor(origin.x)),
-		static_cast<int>(std::floor(origin.y)),
-		static_cast<int>(std::floor(origin.z))
+		static_cast<int>(std::floor(rayOrigin.x)),
+		static_cast<int>(std::floor(rayOrigin.y)),
+		static_cast<int>(std::floor(rayOrigin.z))
 	);
 
 	// Length of ray from one voxel boundary to the next
+	// Use large value instead of infinity for near-zero components
+	const float LARGE = 1e30f;
 	glm::vec3 deltaDist(
-		std::abs(1.0f / rayDir.x),
-		std::abs(1.0f / rayDir.y),
-		std::abs(1.0f / rayDir.z)
+		std::abs(rayDir.x) < 1e-8f ? LARGE : std::abs(1.0f / rayDir.x),
+		std::abs(rayDir.y) < 1e-8f ? LARGE : std::abs(1.0f / rayDir.y),
+		std::abs(rayDir.z) < 1e-8f ? LARGE : std::abs(1.0f / rayDir.z)
 	);
 
 	// Step direction (+1 or -1)
@@ -34,19 +39,19 @@ std::optional<RayHit> Raycast::Cast(
 	// Distance to next voxel boundary
 	glm::vec3 sideDist;
 	if (rayDir.x < 0)
-		sideDist.x = (origin.x - mapPos.x) * deltaDist.x;
+		sideDist.x = (rayOrigin.x - mapPos.x) * deltaDist.x;
 	else
-		sideDist.x = (mapPos.x + 1.0f - origin.x) * deltaDist.x;
+		sideDist.x = (mapPos.x + 1.0f - rayOrigin.x) * deltaDist.x;
 
 	if (rayDir.y < 0)
-		sideDist.y = (origin.y - mapPos.y) * deltaDist.y;
+		sideDist.y = (rayOrigin.y - mapPos.y) * deltaDist.y;
 	else
-		sideDist.y = (mapPos.y + 1.0f - origin.y) * deltaDist.y;
+		sideDist.y = (mapPos.y + 1.0f - rayOrigin.y) * deltaDist.y;
 
 	if (rayDir.z < 0)
-		sideDist.z = (origin.z - mapPos.z) * deltaDist.z;
+		sideDist.z = (rayOrigin.z - mapPos.z) * deltaDist.z;
 	else
-		sideDist.z = (mapPos.z + 1.0f - origin.z) * deltaDist.z;
+		sideDist.z = (mapPos.z + 1.0f - rayOrigin.z) * deltaDist.z;
 
 	// Track the last axis we stepped in for normal calculation
 	int lastAxis = -1;

@@ -50,6 +50,12 @@ float ShadowCalculation(vec4 fragPosLightSpace)
 	return shadow;
 }
 
+// Quantize value into cel-shading bands
+float celShade(float value, int bands)
+{
+	return floor(value * float(bands)) / float(bands - 1);
+}
+
 void main()
 {
 	vec4 texel = texture(tex0, textureCoord);
@@ -60,26 +66,28 @@ void main()
 	// Light direction (pointing towards light)
 	vec3 lightDirection = normalize(-lightDir);
 
-	// Ambient - base lighting so nothing is pure black
-	float ambient = 0.75;
-
 	// Diffuse - faces lit based on angle to sun
 	float diff = max(dot(normal, lightDirection), 0.0);
-	float diffuse = diff * 0.4;
-
-	// Specular (Blinn-Phong) - shiny highlights
-	vec3 viewDir = normalize(viewPos - fragPos);
-	vec3 halfwayDir = normalize(lightDirection + viewDir);
-	float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
-	float specular = spec * 0.2;
 
 	// Shadow
 	float shadow = ShadowCalculation(fragPosLightSpace);
-	float shadowFactor = 1.0 - shadow;
+	float shadowFactor = 1.0 - shadow * 0.5; // Softer shadows for cel-shading
 
-	// Final lighting: ambient always, diffuse+specular only when not in shadow
-	float lighting = ambient + (diffuse + specular) * shadowFactor;
+	// Combine diffuse with shadow
+	float rawLighting = diff * shadowFactor;
 
-	// Apply lighting to texture (ignore the baked face brightness in 'color')
-	FragColor = texel * vec4(vec3(lighting), 1.0);
+	// Cel-shade the lighting into 4 distinct bands
+	float celLighting = celShade(rawLighting, 4);
+
+	// Remap to avoid pure black: range from 0.5 to 1.0
+	float lighting = 0.5 + celLighting * 0.5;
+
+	// Apply lighting to texture
+	vec3 finalColor = texel.rgb * lighting;
+
+	// Slight saturation boost for that cel-shaded pop
+	vec3 gray = vec3(dot(finalColor, vec3(0.299, 0.587, 0.114)));
+	finalColor = mix(gray, finalColor, 1.3);
+
+	FragColor = vec4(finalColor, texel.a);
 }

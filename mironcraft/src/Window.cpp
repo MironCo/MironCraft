@@ -66,6 +66,17 @@ void Window::Create()
 		g_CollisionWorld.ResolveCollision(player, deltaTime);
 		player.Matrix(60.0f, 0.02f, 100.0f, shaderProgram, "cameraMatrix");
 
+		// Q/E to rotate light
+		float lightRotSpeed = 45.0f; // degrees per second
+		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		{
+			Renderer::RotateLight(-lightRotSpeed * deltaTime);
+		}
+		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		{
+			Renderer::RotateLight(lightRotSpeed * deltaTime);
+		}
+
 		Renderer::Draw(shaderProgram, player);
 
 		// Draw crosshair on top
