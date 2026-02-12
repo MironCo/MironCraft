@@ -31,6 +31,7 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/Camera.cpp \
           $(SRC_DIR)/Player.cpp \
           $(SRC_DIR)/Collision.cpp \
+          $(SRC_DIR)/ShadowMap.cpp \
           $(SRC_DIR)/Common.cpp \
           mironcraft/glad.c
 
@@ -52,6 +53,7 @@ OBJECTS = $(BUILD_DIR)/main.o \
           $(BUILD_DIR)/Camera.o \
           $(BUILD_DIR)/Player.o \
           $(BUILD_DIR)/Collision.o \
+          $(BUILD_DIR)/ShadowMap.o \
           $(BUILD_DIR)/Common.o \
           $(BUILD_DIR)/glad.o
 

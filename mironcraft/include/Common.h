@@ -10,6 +10,8 @@ struct WindowData
 {
 	static const int width = 1600;
 	static const int height = 900;
+	static int framebufferWidth;
+	static int framebufferHeight;
 	static const char* name;
 	static const int fpsCap = 60;
 	static const float aspectRatio;

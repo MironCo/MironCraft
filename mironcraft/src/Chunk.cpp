@@ -53,15 +53,28 @@ void Chunk::BatchBlocks()
 					GLfloat* blockVertices = block->GetBlockVertsWithOffset(
 						block->position, block->textureOffset, block->GetBlockType());
 
-					// Check each face for visibility (only render if no neighbor)
-					// Face order: Front(+Z), Back(-Z), Left(-X), Right(+X), Top(+Y), Bottom(-Y)
+					// For trees (LOG/LEAVES), always render all faces since they're sparse
+					// For terrain blocks, check neighbors for face culling
+					bool isTreeBlock = (block->GetBlockType() == BlockType::LOG ||
+					                    block->GetBlockType() == BlockType::LEAVES);
+
 					bool faces[6];
-					faces[0] = !HasBlockAt(x, z + 1, y);     // Front (+Z)
-					faces[1] = !HasBlockAt(x, z - 1, y);     // Back (-Z)
-					faces[2] = !HasBlockAt(x - 1, z, y);     // Left (-X)
-					faces[3] = !HasBlockAt(x + 1, z, y);     // Right (+X)
-					faces[4] = !HasBlockAt(x, z, y + 1);     // Top (+Y)
-					faces[5] = (y == 0) || !HasBlockAt(x, z, y - 1); // Bottom (-Y)
+					if (isTreeBlock)
+					{
+						// Render all faces for tree blocks
+						for (int i = 0; i < 6; i++) faces[i] = true;
+					}
+					else
+					{
+						// Check each face for visibility (only render if no neighbor)
+						// Face order: Front(+Z), Back(-Z), Left(-X), Right(+X), Top(+Y), Bottom(-Y)
+						faces[0] = !HasBlockAt(x, z + 1, y);     // Front (+Z)
+						faces[1] = !HasBlockAt(x, z - 1, y);     // Back (-Z)
+						faces[2] = !HasBlockAt(x - 1, z, y);     // Left (-X)
+						faces[3] = !HasBlockAt(x + 1, z, y);     // Right (+X)
+						faces[4] = !HasBlockAt(x, z, y + 1);     // Top (+Y)
+						faces[5] = (y == 0) || !HasBlockAt(x, z, y - 1); // Bottom (-Y)
+					}
 
 					for (int face = 0; face < 6; face++)
 					{
@@ -203,9 +216,10 @@ void Chunk::Generate()
 
 				if (y == blockHeight + 1)
 				{
-					srand((x + z) * y + z);
+					// Use world position for deterministic but varied seeding
+					srand(static_cast<unsigned int>((x + chunkOffsetX) * 73856093 ^ (z + chunkOffsetZ) * 19349663));
 					int treeChance = rand() % (biomeType == Biome::FOREST ? 70 : 220);
-					if ((biomeType == Biome::FOREST || biomeType == Biome::HILLS) && treeChance == 3)
+					if ((biomeType == Biome::FOREST || biomeType == Biome::HILLS) && treeChance == 0)
 					{
 						Tree::Generate(blockPos, vecY);
 					}

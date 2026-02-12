@@ -4,15 +4,21 @@ layout (location = 1) in float aColor;
 layout (location = 2) in vec2 aTextureOffset;
 layout (location = 3) in vec2 aTexture;
 
+out vec3 fragPos;
 out vec3 color;
 out vec2 textureCoord;
+out vec4 fragPosLightSpace;
+out float faceBrightness;
 
 uniform mat4 cameraMatrix;
+uniform mat4 lightSpaceMatrix;
 
 void main()
 {
+	fragPos = aPos;
 	gl_Position = cameraMatrix * vec4(aPos, 1.0);
 	color = vec3(aColor, aColor, aColor);
-
 	textureCoord = (aTexture / 4) + (aTextureOffset);
+	fragPosLightSpace = lightSpaceMatrix * vec4(aPos, 1.0);
+	faceBrightness = aColor;
 }
