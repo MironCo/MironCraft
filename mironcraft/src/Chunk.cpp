@@ -683,6 +683,48 @@ bool Chunk::RemoveBlockAtWorld(int worldX, int worldY, int worldZ)
 	return false;
 }
 
+bool Chunk::AddBlockAtWorld(int worldX, int worldY, int worldZ, BlockType type)
+{
+	int chunkOffsetX = chunkX * CHUNK_SIZE;
+	int chunkOffsetZ = chunkZ * CHUNK_SIZE;
+
+	// Convert world coords to local chunk coords
+	int localX = worldX - chunkOffsetX;
+	int localZ = worldZ - chunkOffsetZ;
+
+	// Check if this block is in this chunk
+	if (localX < 0 || localX >= CHUNK_SIZE || localZ < 0 || localZ >= CHUNK_SIZE)
+		return false;
+
+	// Create the new block
+	glm::vec3 blockPos(static_cast<float>(worldX), static_cast<float>(worldY), static_cast<float>(worldZ));
+	auto newBlock = std::make_unique<Block>(blockPos, type);
+
+	// Find the right position in the Y array to insert
+	auto& yArray = blocksToRender[localX][localZ];
+
+	// Look for an existing nullptr slot at this Y position, or find insert position
+	for (size_t i = 0; i < yArray.size(); i++)
+	{
+		if (yArray[i] == nullptr)
+		{
+			// Check if this slot corresponds to the Y we want
+			// The Y array index maps to actual Y coordinates based on UNDERGROUND_DEPTH
+			yArray[i] = std::move(newBlock);
+			return true;
+		}
+		if (yArray[i] && static_cast<int>(yArray[i]->position.y) == worldY)
+		{
+			// Block already exists at this position
+			return false;
+		}
+	}
+
+	// If no suitable slot found, just add to the end
+	yArray.push_back(std::move(newBlock));
+	return true;
+}
+
 void Chunk::RebuildMesh()
 {
 	// Delete old solid buffers

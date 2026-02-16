@@ -48,6 +48,7 @@ public:
 	bool isGrounded = false;
 	bool cursorLocked = true;
 	bool leftMousePressed = false;
+	bool rightMousePressed = false;
 	bool isFlying = false;
 	bool flyKeyPressed = false;
 	bool firstMouse = true;

@@ -10,6 +10,7 @@
 #include "Shader.h"
 #include "Player.h"
 #include "ShadowMap.h"
+#include "Block.h"
 
 class Chunk;
 
@@ -46,6 +47,9 @@ public:
 
 	// Remove a block at world position and rebuild affected chunk
 	static void RemoveBlock(int worldX, int worldY, int worldZ);
+
+	// Add a block at world position and rebuild affected chunk
+	static void AddBlock(int worldX, int worldY, int worldZ, BlockType type);
 
 	// Rotate the sun/light
 	static void RotateLight(float angle);

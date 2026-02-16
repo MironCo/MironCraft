@@ -60,8 +60,9 @@ void Player::CheckBlockInteraction(GLFWwindow* window)
 	if (!cursorLocked) return;
 
 	bool leftDown = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS;
+	bool rightDown = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 
-	// Only break on initial click (not hold)
+	// Break block on left click
 	if (leftDown && !leftMousePressed)
 	{
 		leftMousePressed = true;
@@ -77,6 +78,36 @@ void Player::CheckBlockInteraction(GLFWwindow* window)
 	else if (!leftDown)
 	{
 		leftMousePressed = false;
+	}
+
+	// Place block on right click
+	if (rightDown && !rightMousePressed)
+	{
+		rightMousePressed = true;
+
+		// Cast ray from eye position in look direction
+		auto hit = Raycast::Cast(GetEyePosition(), GetLookDirection(), 5.0f);
+		if (hit)
+		{
+			// Place block adjacent to the hit face (use the normal)
+			int placeX = hit->blockPos.x + hit->normal.x;
+			int placeY = hit->blockPos.y + hit->normal.y;
+			int placeZ = hit->blockPos.z + hit->normal.z;
+
+			// Don't place if it would intersect with player
+			AABB blockAABB(
+				glm::vec3(placeX - 0.5f, placeY - 0.5f, placeZ - 0.5f),
+				glm::vec3(placeX + 0.5f, placeY + 0.5f, placeZ + 0.5f)
+			);
+			if (!GetAABB().Intersects(blockAABB))
+			{
+				Renderer::AddBlock(placeX, placeY, placeZ, BlockType::LOG);
+			}
+		}
+	}
+	else if (!rightDown)
+	{
+		rightMousePressed = false;
 	}
 }
 

@@ -95,6 +95,8 @@ public:
 
 	// Remove a block at world position, returns true if block was in this chunk
 	bool RemoveBlockAtWorld(int worldX, int worldY, int worldZ);
+	// Add a block at world position, returns true if block was added to this chunk
+	bool AddBlockAtWorld(int worldX, int worldY, int worldZ, BlockType type);
 	void RebuildMesh();
 
 	// Get chunk boundaries

@@ -263,6 +263,22 @@ void Renderer::RemoveBlock(int worldX, int worldY, int worldZ)
 	}
 }
 
+void Renderer::AddBlock(int worldX, int worldY, int worldZ, BlockType type)
+{
+	// Add to collision world
+	g_CollisionWorld.AddBlock(worldX, worldY, worldZ);
+
+	// Find the chunk containing this block and update its mesh
+	for (auto& chunk : chunksToRender)
+	{
+		if (chunk->isLoaded && chunk->AddBlockAtWorld(worldX, worldY, worldZ, type))
+		{
+			chunk->RebuildMesh();
+			break;
+		}
+	}
+}
+
 void Renderer::RotateLight(float angle)
 {
 	if (shadowMap)
