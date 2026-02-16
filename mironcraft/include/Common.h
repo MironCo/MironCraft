@@ -14,7 +14,7 @@ struct WindowData
 	static int framebufferHeight;
 	static const char* name;
 	static const int fpsCap = 60;
-	static const float aspectRatio;
+	static float GetAspectRatio() { return (float)framebufferWidth / (float)framebufferHeight; }
 };
 
 float sqr(float number);

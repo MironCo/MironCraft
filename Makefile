@@ -35,6 +35,7 @@ SOURCES = $(SRC_DIR)/main.cpp \
           $(SRC_DIR)/Common.cpp \
           $(SRC_DIR)/Crosshair.cpp \
           $(SRC_DIR)/Raycast.cpp \
+          $(SRC_DIR)/DebugCamera.cpp \
           mironcraft/glad.c
 
 # Object files
@@ -59,6 +60,7 @@ OBJECTS = $(BUILD_DIR)/main.o \
           $(BUILD_DIR)/Common.o \
           $(BUILD_DIR)/Crosshair.o \
           $(BUILD_DIR)/Raycast.o \
+          $(BUILD_DIR)/DebugCamera.o \
           $(BUILD_DIR)/glad.o
 
 # Output binary

@@ -323,6 +323,52 @@ static BiomeParams GetBiomeParams(Biome biome)
 	return p;
 }
 
+// Check if a position should be carved out as a cave
+static bool ShouldCarveCave(float worldX, float worldY, float worldZ, int seed, int surfaceHeight)
+{
+	// Worm tunnel noise - creates elongated tunnels using "spaghetti caves" technique
+	// Higher frequency = smaller, tighter tunnels
+	float wormScale = 0.1f;
+
+	// Two perpendicular worm noises that intersect to form tunnels
+	float worm1 = glm::perlin(glm::vec3(
+		worldX * wormScale,
+		worldY * wormScale * 0.7f,
+		worldZ * wormScale
+	) + glm::vec3(seed * 0.1f));
+
+	float worm2 = glm::perlin(glm::vec3(
+		worldX * wormScale + 100.0f,
+		worldY * wormScale * 0.7f + 100.0f,
+		worldZ * wormScale + 100.0f
+	) + glm::vec3(seed * 0.1f));
+
+	// Spaghetti cave formula: both noises must be near zero
+	// This creates thin, winding tunnels instead of massive chambers
+	float tunnelRadius = 0.15f;  // Smaller = thinner tunnels
+	bool isWormCave = (glm::abs(worm1) < tunnelRadius) && (glm::abs(worm2) < tunnelRadius);
+
+	// Rare larger chambers using a separate noise
+	float chamberScale = 0.05f;
+	float chamberNoise = glm::perlin(glm::vec3(
+		worldX * chamberScale,
+		worldY * chamberScale,
+		worldZ * chamberScale
+	) + glm::vec3(seed * 0.1f + 500.0f));
+
+	// Only create chambers occasionally (high threshold)
+	bool isChamber = chamberNoise > 0.55f;
+
+	// Allow caves to break through near surface (within 3 blocks of surface)
+	// But not ON the surface itself (that would look weird)
+	float depthBelowSurface = static_cast<float>(surfaceHeight) - worldY;
+	if (depthBelowSurface < 1.0f)
+		return false;  // Don't carve the surface block itself
+
+	// Caves can appear from 1 block below surface down to bedrock
+	return isWormCave || isChamber;
+}
+
 // Get biome weights at a world position (for smooth blending)
 static void GetBiomeWeights(float worldX, float worldZ, int seed, float weights[5], Biome biomes[5])
 {
@@ -430,7 +476,9 @@ void Chunk::Generate()
 				(noiseVal + (simplexVal + 1) / 2) * blendedAmplitude + blendedBaseHeight));
 
 			std::vector<std::unique_ptr<Block>> vecY;
-			for (int y = -CHUNK_DEPTH; y < blockHeight + 5; y++)
+			// Underground depth - balance between cave space and performance
+			const int UNDERGROUND_DEPTH = 15;
+			for (int y = -UNDERGROUND_DEPTH; y < blockHeight + 5; y++)
 			{
 				glm::vec3 blockPos(worldX, y, worldZ);
 
@@ -450,16 +498,34 @@ void Chunk::Generate()
 
 				if (y < blockHeight)
 				{
-					// Underground blocks
-					if (dirtWeight > 0.5f && y > blockHeight - 3)
+					// Check if this position should be carved out as a cave
+					bool isCave = ShouldCarveCave(
+						static_cast<float>(worldX),
+						static_cast<float>(y),
+						static_cast<float>(worldZ),
+						randomOffset,
+						blockHeight
+					);
+
+					if (!isCave)
 					{
-						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::DIRT));
+						// Underground blocks - only place if not a cave
+						if (dirtWeight > 0.5f && y > blockHeight - 3)
+						{
+							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::DIRT));
+						}
+						else
+						{
+							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
+						}
+						// Collision is added later in ApplyCollision()
 					}
 					else
 					{
-						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::STONE));
+						// Push nullptr to maintain array index alignment with Y coordinates
+						// This is critical for face culling to work correctly!
+						vecY.push_back(nullptr);
 					}
-					// Collision is added later in ApplyCollision()
 				}
 
 				// Water generation

@@ -147,7 +147,7 @@ void Renderer::DrawOutlinePass(Player& player)
 	outlineShader->Activate();
 
 	// Set camera matrix
-	player.Matrix(60.0f, 0.02f, 100.0f, *outlineShader, "cameraMatrix");
+	player.Matrix(60.0f, 0.15f, 100.0f, *outlineShader, "cameraMatrix");
 
 	for (auto& chunk : chunksToRender)
 	{

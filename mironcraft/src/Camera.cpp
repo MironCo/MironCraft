@@ -12,7 +12,7 @@ void Camera::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shade
 	glm::mat4 proj = glm::mat4(1.0f);
 
 	view = glm::lookAt(position, position + rotation, upDirection);
-	proj = glm::perspective(glm::radians(FOVdeg), WindowData::aspectRatio, nearPlane, farPlane);
+	proj = glm::perspective(glm::radians(FOVdeg), WindowData::GetAspectRatio(), nearPlane, farPlane);
 
 	glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgramID, uniform), 1, GL_FALSE, glm::value_ptr(proj * view));
 }

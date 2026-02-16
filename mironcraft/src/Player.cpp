@@ -8,6 +8,7 @@ Player::Player(glm::vec3 _pos)
 {
 	position = _pos;
 	cursorLocked = true;
+	firstMouse = true;
 }
 
 AABB Player::GetAABB() const
@@ -20,15 +21,38 @@ AABB Player::GetAABB() const
 
 void Player::Update(GLFWwindow* window, float deltaTime)
 {
-	CheckInputs(window, deltaTime);
 	CheckMouseInput(window);
+	CheckInputs(window, deltaTime);
 	CheckBlockInteraction(window);
 	ApplyGravity(deltaTime);
 }
 
 glm::vec3 Player::GetEyePosition() const
 {
-	return position + glm::vec3(0.0f, -0.2f, 0.0f);
+	// Eye is at top of player minus a small offset for head clearance
+	return position + glm::vec3(0.0f, -0.1f, 0.0f);
+}
+
+// Calculate look direction from pitch and yaw
+glm::vec3 Player::GetLookDirection() const
+{
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	return glm::normalize(direction);
+}
+
+// Horizontal forward direction (for movement, ignores pitch)
+glm::vec3 Player::GetForward() const
+{
+	return glm::normalize(glm::vec3(cos(glm::radians(yaw)), 0.0f, sin(glm::radians(yaw))));
+}
+
+// Right direction (perpendicular to forward)
+glm::vec3 Player::GetRight() const
+{
+	return glm::normalize(glm::cross(GetForward(), glm::vec3(0.0f, 1.0f, 0.0f)));
 }
 
 void Player::CheckBlockInteraction(GLFWwindow* window)
@@ -43,7 +67,7 @@ void Player::CheckBlockInteraction(GLFWwindow* window)
 		leftMousePressed = true;
 
 		// Cast ray from eye position in look direction
-		auto hit = Raycast::Cast(GetEyePosition(), rotation, 5.0f);
+		auto hit = Raycast::Cast(GetEyePosition(), GetLookDirection(), 5.0f);
 		if (hit)
 		{
 			// Remove the block from world (collision + visual)
@@ -105,8 +129,8 @@ void Player::CheckInputs(GLFWwindow* window, float deltaTime)
 		flyKeyPressed = false;
 	}
 
-	glm::vec3 forward = glm::normalize(glm::vec3(rotation.x, 0, rotation.z));
-	glm::vec3 right = glm::normalize(glm::cross(rotation, upDirection));
+	glm::vec3 forward = GetForward();
+	glm::vec3 right = GetRight();
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
@@ -155,31 +179,40 @@ void Player::CheckMouseInput(GLFWwindow* window)
 		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		{
 			cursorLocked = false;
+			firstMouse = true;
 		}
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 		double mouseX, mouseY;
 		glfwGetCursorPos(window, &mouseX, &mouseY);
 
-		float rotX = sensitivity * (float)(mouseY - (WindowData::height / 2)) / WindowData::height;
-		float rotY = sensitivity * (float)(mouseX - (WindowData::width / 2)) / WindowData::width;
-
-		glm::vec3 newRotation = glm::rotate(rotation, glm::radians(-rotX), glm::normalize(glm::cross(rotation, upDirection)));
-
-		if (!(glm::angle(newRotation, upDirection) <= glm::radians(1.0f)) || !(glm::angle(newRotation, -upDirection) <= glm::radians(10.0f)))
+		if (firstMouse)
 		{
-			rotation = newRotation;
+			lastMouseX = mouseX;
+			lastMouseY = mouseY;
+			firstMouse = false;
 		}
 
-		rotation = glm::rotate(rotation, glm::radians(-rotY), upDirection);
-		rotation = glm::normalize(rotation);
-		glfwSetCursorPos(window, (WindowData::width / 2), (WindowData::height / 2));
+		// Calculate mouse delta
+		double deltaX = mouseX - lastMouseX;
+		double deltaY = lastMouseY - mouseY;  // Reversed: y goes down in screen coords
+		lastMouseX = mouseX;
+		lastMouseY = mouseY;
+
+		// Apply sensitivity
+		yaw += static_cast<float>(deltaX) * sensitivity;
+		pitch += static_cast<float>(deltaY) * sensitivity;
+
+		// Clamp pitch to prevent flipping
+		if (pitch > 89.0f) pitch = 89.0f;
+		if (pitch < -89.0f) pitch = -89.0f;
 	}
 	else
 	{
 		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
 		{
 			cursorLocked = true;
+			firstMouse = true;
 		}
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
@@ -187,10 +220,11 @@ void Player::CheckMouseInput(GLFWwindow* window)
 
 void Player::Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform)
 {
-	glm::vec3 eyePosition = position + glm::vec3(0.0f, -0.2f, 0.0f);
+	glm::vec3 eyePosition = GetEyePosition();
+	glm::vec3 lookDir = GetLookDirection();
 
-	glm::mat4 view = glm::lookAt(eyePosition, eyePosition + rotation, upDirection);
-	glm::mat4 proj = glm::perspective(glm::radians(FOVdeg), WindowData::aspectRatio, nearPlane, farPlane);
+	glm::mat4 view = glm::lookAt(eyePosition, eyePosition + lookDir, glm::vec3(0.0f, 1.0f, 0.0f));
+	glm::mat4 proj = glm::perspective(glm::radians(FOVdeg), WindowData::GetAspectRatio(), nearPlane, farPlane);
 
 	glUniformMatrix4fv(glGetUniformLocation(shader.shaderProgramID, uniform), 1, GL_FALSE, glm::value_ptr(proj * view));
 }

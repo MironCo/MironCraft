@@ -4,26 +4,32 @@
 Crosshair::Crosshair() : shader("res/shaders/ui.vert", "res/shaders/ui.frag")
 {
 	// Crosshair size in NDC (normalized device coordinates)
+	// Compensate for aspect ratio so crosshair appears square
+	float aspectRatio = WindowData::GetAspectRatio();
 	float size = 0.02f;
 	float thickness = 0.003f;
+
+	// Scale X by 1/aspectRatio to make it square on screen
+	float sizeX = size / aspectRatio;
+	float thicknessX = thickness / aspectRatio;
 
 	// Two lines: horizontal and vertical
 	float vertices[] = {
 		// Horizontal line
-		-size, -thickness,
-		 size, -thickness,
-		 size,  thickness,
-		-size, -thickness,
-		 size,  thickness,
-		-size,  thickness,
+		-sizeX, -thickness,
+		 sizeX, -thickness,
+		 sizeX,  thickness,
+		-sizeX, -thickness,
+		 sizeX,  thickness,
+		-sizeX,  thickness,
 
 		// Vertical line
-		-thickness, -size,
-		 thickness, -size,
-		 thickness,  size,
-		-thickness, -size,
-		 thickness,  size,
-		-thickness,  size,
+		-thicknessX, -size,
+		 thicknessX, -size,
+		 thicknessX,  size,
+		-thicknessX, -size,
+		 thicknessX,  size,
+		-thicknessX,  size,
 	};
 
 	glGenVertexArrays(1, &VAO);

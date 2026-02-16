@@ -30,10 +30,12 @@ class Player
 public:
 	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 velocity = glm::vec3(0.0f);
-	glm::vec3 rotation = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 upDirection = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	float width = 0.6f;
+	// Camera angles (in degrees)
+	float yaw = -90.0f;    // Horizontal rotation (look left/right)
+	float pitch = 0.0f;    // Vertical rotation (look up/down)
+
+	float width = 1.0f;   // Wider hitbox keeps camera further from walls
 	float height = 1.8f;
 
 	float speed = 100.0f;
@@ -41,13 +43,16 @@ public:
 	float jumpForce = 8.0f;
 	float gravity = 25.0f;
 	float friction = 10.0f;
-	float sensitivity = 50.0f;
+	float sensitivity = 0.1f;  // Mouse sensitivity (degrees per pixel)
 
 	bool isGrounded = false;
 	bool cursorLocked = true;
 	bool leftMousePressed = false;
 	bool isFlying = false;
 	bool flyKeyPressed = false;
+	bool firstMouse = true;
+	double lastMouseX = 0.0;
+	double lastMouseY = 0.0;
 
 	Player() = default;
 	Player(glm::vec3 _pos);
@@ -60,6 +65,9 @@ public:
 	void CheckBlockInteraction(GLFWwindow* window);
 
 	glm::vec3 GetEyePosition() const;
+	glm::vec3 GetLookDirection() const;
+	glm::vec3 GetForward() const;  // Horizontal forward (for movement)
+	glm::vec3 GetRight() const;
 
 	void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
 };

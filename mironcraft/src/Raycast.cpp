@@ -13,11 +13,15 @@ std::optional<RayHit> Raycast::Cast(
 	// Start slightly ahead to avoid issues at origin
 	glm::vec3 rayOrigin = origin + rayDir * 0.01f;
 
-	// Current voxel position
+	// Blocks are centered at integer coords (span -0.5 to +0.5)
+	// Shift coordinates so block boundaries align with integers
+	glm::vec3 shiftedOrigin = rayOrigin + glm::vec3(0.5f);
+
+	// Current voxel position (in shifted space, then convert back)
 	glm::ivec3 mapPos(
-		static_cast<int>(std::floor(rayOrigin.x)),
-		static_cast<int>(std::floor(rayOrigin.y)),
-		static_cast<int>(std::floor(rayOrigin.z))
+		static_cast<int>(std::floor(shiftedOrigin.x)),
+		static_cast<int>(std::floor(shiftedOrigin.y)),
+		static_cast<int>(std::floor(shiftedOrigin.z))
 	);
 
 	// Length of ray from one voxel boundary to the next
@@ -36,22 +40,22 @@ std::optional<RayHit> Raycast::Cast(
 		rayDir.z >= 0 ? 1 : -1
 	);
 
-	// Distance to next voxel boundary
+	// Distance to next voxel boundary (using shifted coordinates)
 	glm::vec3 sideDist;
 	if (rayDir.x < 0)
-		sideDist.x = (rayOrigin.x - mapPos.x) * deltaDist.x;
+		sideDist.x = (shiftedOrigin.x - mapPos.x) * deltaDist.x;
 	else
-		sideDist.x = (mapPos.x + 1.0f - rayOrigin.x) * deltaDist.x;
+		sideDist.x = (mapPos.x + 1.0f - shiftedOrigin.x) * deltaDist.x;
 
 	if (rayDir.y < 0)
-		sideDist.y = (rayOrigin.y - mapPos.y) * deltaDist.y;
+		sideDist.y = (shiftedOrigin.y - mapPos.y) * deltaDist.y;
 	else
-		sideDist.y = (mapPos.y + 1.0f - rayOrigin.y) * deltaDist.y;
+		sideDist.y = (mapPos.y + 1.0f - shiftedOrigin.y) * deltaDist.y;
 
 	if (rayDir.z < 0)
-		sideDist.z = (rayOrigin.z - mapPos.z) * deltaDist.z;
+		sideDist.z = (shiftedOrigin.z - mapPos.z) * deltaDist.z;
 	else
-		sideDist.z = (mapPos.z + 1.0f - rayOrigin.z) * deltaDist.z;
+		sideDist.z = (mapPos.z + 1.0f - shiftedOrigin.z) * deltaDist.z;
 
 	// Track the last axis we stepped in for normal calculation
 	int lastAxis = -1;

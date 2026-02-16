@@ -34,6 +34,7 @@ public:
 
 	AABB GetBlockAABB(int x, int y, int z) const;
 	bool CheckCollision(const AABB& playerAABB) const;
+	glm::vec3 GetDepenetration(const AABB& playerAABB) const;
 	void ResolveCollision(Player& player, float deltaTime);
 };
 
