@@ -29,14 +29,14 @@ AABB CollisionWorld::GetBlockAABB(int x, int y, int z) const
 
 bool CollisionWorld::CheckCollision(const AABB& playerAABB) const
 {
-	// Use round since blocks are centered at integer coords (span -0.5 to +0.5)
-	// But expand range by 1 to catch edge cases
-	int minX = static_cast<int>(std::floor(playerAABB.min.x + 0.5f));
-	int minY = static_cast<int>(std::floor(playerAABB.min.y + 0.5f));
-	int minZ = static_cast<int>(std::floor(playerAABB.min.z + 0.5f));
-	int maxX = static_cast<int>(std::floor(playerAABB.max.x));
-	int maxY = static_cast<int>(std::floor(playerAABB.max.y));
-	int maxZ = static_cast<int>(std::floor(playerAABB.max.z));
+	// Blocks are centered at integer coords (span -0.5 to +0.5 around integer)
+	// Expand range by 1 to catch all edge cases
+	int minX = static_cast<int>(std::floor(playerAABB.min.x + 0.5f)) - 1;
+	int minY = static_cast<int>(std::floor(playerAABB.min.y + 0.5f)) - 1;
+	int minZ = static_cast<int>(std::floor(playerAABB.min.z + 0.5f)) - 1;
+	int maxX = static_cast<int>(std::floor(playerAABB.max.x + 0.5f)) + 1;
+	int maxY = static_cast<int>(std::floor(playerAABB.max.y + 0.5f)) + 1;
+	int maxZ = static_cast<int>(std::floor(playerAABB.max.z + 0.5f)) + 1;
 
 	for (int x = minX; x <= maxX; x++)
 	{
@@ -63,12 +63,14 @@ glm::vec3 CollisionWorld::GetDepenetration(const AABB& playerAABB) const
 {
 	glm::vec3 totalPush(0.0f);
 
-	int minX = static_cast<int>(std::floor(playerAABB.min.x));
-	int minY = static_cast<int>(std::floor(playerAABB.min.y));
-	int minZ = static_cast<int>(std::floor(playerAABB.min.z));
-	int maxX = static_cast<int>(std::floor(playerAABB.max.x));
-	int maxY = static_cast<int>(std::floor(playerAABB.max.y));
-	int maxZ = static_cast<int>(std::floor(playerAABB.max.z));
+	// Blocks are centered at integer coords (span -0.5 to +0.5 around integer)
+	// Expand range by 1 to catch all edge cases
+	int minX = static_cast<int>(std::floor(playerAABB.min.x + 0.5f)) - 1;
+	int minY = static_cast<int>(std::floor(playerAABB.min.y + 0.5f)) - 1;
+	int minZ = static_cast<int>(std::floor(playerAABB.min.z + 0.5f)) - 1;
+	int maxX = static_cast<int>(std::floor(playerAABB.max.x + 0.5f)) + 1;
+	int maxY = static_cast<int>(std::floor(playerAABB.max.y + 0.5f)) + 1;
+	int maxZ = static_cast<int>(std::floor(playerAABB.max.z + 0.5f)) + 1;
 
 	for (int x = minX; x <= maxX; x++)
 	{
@@ -131,13 +133,14 @@ void CollisionWorld::ResolveCollision(Player& player, float deltaTime)
 		int pushAxis = -1;
 		float pushDir = 0.0f;
 
-		// Blocks are centered at integer coords, so use +0.5 offset for correct lookup
-		int minX = static_cast<int>(std::floor(playerAABB.min.x + 0.5f));
-		int minY = static_cast<int>(std::floor(playerAABB.min.y + 0.5f));
-		int minZ = static_cast<int>(std::floor(playerAABB.min.z + 0.5f));
-		int maxX = static_cast<int>(std::floor(playerAABB.max.x + 0.5f));
-		int maxY = static_cast<int>(std::floor(playerAABB.max.y + 0.5f));
-		int maxZ = static_cast<int>(std::floor(playerAABB.max.z + 0.5f));
+		// Blocks are centered at integer coords (span -0.5 to +0.5 around integer)
+		// Use round to find the closest block center, then check ±1 to be safe
+		int minX = static_cast<int>(std::floor(playerAABB.min.x + 0.5f)) - 1;
+		int minY = static_cast<int>(std::floor(playerAABB.min.y + 0.5f)) - 1;
+		int minZ = static_cast<int>(std::floor(playerAABB.min.z + 0.5f)) - 1;
+		int maxX = static_cast<int>(std::floor(playerAABB.max.x + 0.5f)) + 1;
+		int maxY = static_cast<int>(std::floor(playerAABB.max.y + 0.5f)) + 1;
+		int maxZ = static_cast<int>(std::floor(playerAABB.max.z + 0.5f)) + 1;
 
 		for (int x = minX; x <= maxX; x++)
 		{

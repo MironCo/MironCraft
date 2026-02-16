@@ -359,13 +359,25 @@ static bool ShouldCarveCave(float worldX, float worldY, float worldZ, int seed, 
 	// Only create chambers occasionally (high threshold)
 	bool isChamber = chamberNoise > 0.55f;
 
-	// Allow caves to break through near surface (within 3 blocks of surface)
-	// But not ON the surface itself (that would look weird)
 	float depthBelowSurface = static_cast<float>(surfaceHeight) - worldY;
-	if (depthBelowSurface < 1.0f)
-		return false;  // Don't carve the surface block itself
 
-	// Caves can appear from 1 block below surface down to bedrock
+	// Surface entrance noise - determines where holes can appear
+	float entranceNoise = glm::perlin(glm::vec3(
+		worldX * 0.07f + seed * 0.1f,
+		worldZ * 0.07f + seed * 0.15f,
+		0.0f
+	));
+
+	// Allow surface holes where entrance noise is high AND there's a cave below
+	if (depthBelowSurface >= 0.0f && depthBelowSurface < 3.0f)
+	{
+		// Only carve surface/near-surface if both cave exists AND entrance noise allows it
+		if (isWormCave && entranceNoise > 0.25f)
+			return true;
+		return false;
+	}
+
+	// Deeper caves - normal generation
 	return isWormCave || isChamber;
 }
 
@@ -484,14 +496,31 @@ void Chunk::Generate()
 
 				if (y == blockHeight)
 				{
-					// Surface block - choose based on biome weights
-					if (grassWeight > sandWeight)
+					// Check if surface should be carved as a cave entrance
+					bool isCaveEntrance = ShouldCarveCave(
+						static_cast<float>(worldX),
+						static_cast<float>(y),
+						static_cast<float>(worldZ),
+						randomOffset,
+						blockHeight
+					);
+
+					if (!isCaveEntrance)
 					{
-						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::GRASS));
+						// Surface block - choose based on biome weights
+						if (grassWeight > sandWeight)
+						{
+							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::GRASS));
+						}
+						else
+						{
+							vecY.push_back(std::make_unique<Block>(blockPos, BlockType::SAND));
+						}
 					}
 					else
 					{
-						vecY.push_back(std::make_unique<Block>(blockPos, BlockType::SAND));
+						// Cave entrance - no surface block
+						vecY.push_back(nullptr);
 					}
 					// Collision is added later in ApplyCollision()
 				}

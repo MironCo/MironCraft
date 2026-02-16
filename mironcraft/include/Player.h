@@ -35,8 +35,8 @@ public:
 	float yaw = -90.0f;    // Horizontal rotation (look left/right)
 	float pitch = 0.0f;    // Vertical rotation (look up/down)
 
-	float width = 1.0f;   // Wider hitbox keeps camera further from walls
-	float height = 1.8f;
+	float width = 0.4f;   // Small enough to easily fit through 1-block holes
+	float height = 1.8f;  // Standard player height
 
 	float speed = 100.0f;
 	float maxSpeed = 8.0f;
